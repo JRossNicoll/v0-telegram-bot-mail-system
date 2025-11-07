@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
+
+const securityHeaders = [
+  {
+    key: "Content-Security-Policy",
+    value:
+      "frame-ancestors 'self' https://v0.app https://www.v0.app https://auth.privy.io https://*.privy.io;",
+  },
+];
+
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -20,13 +29,22 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
-      }
+      };
     }
-    
-    config.externals.push('pino-pretty', 'encoding')
-    
-    return config
-  },
-}
 
-export default nextConfig
+    config.externals.push('pino-pretty', 'encoding');
+
+    return config;
+  },
+
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
+  },
+};
+
+export default nextConfig;
