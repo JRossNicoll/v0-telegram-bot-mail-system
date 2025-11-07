@@ -4,25 +4,15 @@ import CryptoJS from "crypto-js";
 import bs58 from "bs58";
 
 // Utility to decrypt the private key
-function decryptPrivateKey(encryptedKey: string) {
-  const secret = process.env.ENCRYPTION_SECRET;
-  if (!secret) {
-    throw new Error("Encryption secret is not configured.");
-  }
-
-  const bytes = CryptoJS.AES.decrypt(encryptedKey, secret);
-  const decryptedKey = bytes.toString(CryptoJS.enc.Utf8);
-
-  if (!decryptedKey) {
-    throw new Error("Failed to decrypt private key.");
-  }
-
-  return Uint8Array.from(JSON.parse(decryptedKey));
+function decryptPrivateKey(encrypted: string) {
+  const key = CryptoJS.enc.Utf8.parse(process.env.ENCRYPTION_KEY || "");
+  const decrypted = CryptoJS.AES.decrypt(encrypted, key);
+  return Uint8Array.from(decrypted.words, (value) => value & 0xff);
 }
 
-export async function POST(req: Request) {
+export async function GET() {
   try {
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const userCookie = cookieStore.get("courier_user");
 
     if (!userCookie) {
@@ -31,22 +21,19 @@ export async function POST(req: Request) {
 
     const user = JSON.parse(userCookie.value);
 
-    // ✅ Fix: ensure encrypted private key exists
     if (!user.encryptedPrivateKey) {
-      return NextResponse.json(
-        { error: "User has no encrypted private key stored" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No private key found" }, { status: 400 });
     }
 
-    // ✅ TS-safe decryption
-    const privateKeyBytes = decryptPrivateKey(user.encryptedPrivateKey as string);
+    // Decrypt
+    const privateKeyBytes = decryptPrivateKey(user.encryptedPrivateKey);
 
+    // Convert to base58
     const privateKeyBase58 = bs58.encode(privateKeyBytes);
 
     return NextResponse.json({ privateKey: privateKeyBase58 });
-  } catch (err: any) {
-    console.error("Export key error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (error) {
+    console.error("Error exporting key:", error);
+    return NextResponse.json({ error: "Failed to export key" }, { status: 500 });
   }
 }
