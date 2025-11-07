@@ -1,43 +1,27 @@
 "use client";
 
 import { PrivyProvider } from "@privy-io/react-auth";
-import { useEffect, useState } from "react";
+import { solanaWallet } from "@privy-io/react-auth/solana";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 
-export default function PrivyProviderWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [phantomProvider, setPhantomProvider] = useState<any>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).phantom?.solana) {
-      setPhantomProvider((window as any).phantom.solana);
-      console.log("✅ Phantom provider injected");
-    } else {
-      console.log("❌ Phantom not detected");
-    }
-  }, []);
-
+export default function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={{
-        loginMethods: ["wallet"],
         appearance: {
-          theme: "dark",
-          accentColor: "#6C47FF",
+          theme: "light",
+          accentColor: "#676FFF",
         },
-        walletConnectors: {
-          injected: true,
-          solana: phantomProvider
-            ? [
-                {
-                  name: "phantom",
-                  provider: phantomProvider,
-                },
-              ]
-            : [],
+        walletConnectCloudProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
+        externalWallets: {
+          solana: {
+            connectors: [
+              solanaWallet({
+                wallet: new PhantomWalletAdapter(),
+              }),
+            ],
+          },
         },
       }}
     >

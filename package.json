@@ -44,6 +44,7 @@
     "@solana-program/system": "latest",
     "@solana-program/token": "latest",
     "@solana/kit": "latest",
+    "@solana/wallet-adapter-phantom": "latest",
     "@solana/wallet-adapter-react": "latest",
     "@solana/web3.js": "latest",
     "@upstash/redis": "latest",

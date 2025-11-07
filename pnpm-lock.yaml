@@ -113,6 +113,9 @@ importers:
       '@solana/kit':
         specifier: latest
         version: 5.0.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.0.2)(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+      '@solana/wallet-adapter-phantom':
+        specifier: latest
+        version: 0.9.28(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-react':
         specifier: latest
         version: 0.15.39(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10))(bs58@6.0.0)(fastestsmallesttextencoderdecoder@1.0.22)(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.0.0)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10))(react@19.2.0)(typescript@5.0.2)
@@ -2046,6 +2049,12 @@ packages:
 
   '@solana/wallet-adapter-base@0.9.27':
     resolution: {integrity: sha512-kXjeNfNFVs/NE9GPmysBRKQ/nf+foSaq3kfVSeMcO/iVgigyRmB551OjU3WyAolLG/1jeEfKLqF9fKwMCRkUqg==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@solana/web3.js': ^1.98.0
+
+  '@solana/wallet-adapter-phantom@0.9.28':
+    resolution: {integrity: sha512-g/hcuWwWjzo5l8I4vor9htniVhLxd/GhoVK52WSd0hy8IZ8/FBnV3u8ABVTheLqO13d0IVy+xTxoVBbDaMjLog==}
     engines: {node: '>=20'}
     peerDependencies:
       '@solana/web3.js': ^1.98.0
@@ -6946,6 +6955,11 @@ snapshots:
       '@wallet-standard/base': 1.1.0
       '@wallet-standard/features': 1.1.0
       eventemitter3: 5.0.1
+
+  '@solana/wallet-adapter-phantom@0.9.28(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10))':
+    dependencies:
+      '@solana/wallet-adapter-base': 0.9.27(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10))
+      '@solana/web3.js': 1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10)
 
   '@solana/wallet-adapter-react@0.15.39(@solana/web3.js@1.98.4(bufferutil@4.0.9)(typescript@5.0.2)(utf-8-validate@5.0.10))(bs58@6.0.0)(fastestsmallesttextencoderdecoder@1.0.22)(react-native@0.82.1(@babel/core@7.28.5)(@types/react@19.0.0)(bufferutil@4.0.9)(react@19.2.0)(utf-8-validate@5.0.10))(react@19.2.0)(typescript@5.0.2)':
     dependencies:
