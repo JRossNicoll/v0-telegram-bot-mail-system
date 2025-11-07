@@ -1,9 +1,10 @@
 import "./globals.css";
+import type { Metadata } from "next";
 import PrivyProviderWrapper from "./privy-provider";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Courier",
-  description: "Secure Telegram mail inbox",
+  description: "Smart Telegram Web App + Solana + Privy",
     generator: 'v0.app'
 };
 
