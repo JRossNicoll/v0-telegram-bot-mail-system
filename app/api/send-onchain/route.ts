@@ -1,67 +1,55 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import bs58 from "bs58";
-import { saveMessage } from "@/lib/storage/messages";
+import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { saveMessage } from "@/lib/storage/messages"
+import { getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
+import { sendOnChainMessage } from "@/lib/solana/transactions"
+
+function isValidSolanaAddress(address: unknown): address is string {
+  return typeof address === "string" && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)
+}
 
 export async function POST(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const userCookie = cookieStore.get("courier_user");
+    const cookieStore = await cookies()
+    const walletAddress = cookieStore.get("courier_wallet")?.value
 
-    if (!userCookie) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    if (!isValidSolanaAddress(walletAddress)) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
     }
 
-    const { toWallet, message, signature } = await req.json();
-    if (!toWallet || !message || !signature) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    const { toWallet, message } = await req.json()
+
+    if (!isValidSolanaAddress(toWallet) || typeof message !== "string" || message.trim().length === 0) {
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
     }
 
-    const { publicKey: fromWallet } = JSON.parse(userCookie.value);
-
-    // Verify signature
-    const connection = new Connection(
-      process.env.SOLANA_RPC_URL || clusterApiUrl("mainnet-beta"),
-      "confirmed"
-    );
-
-    const pubKey = new PublicKey(fromWallet);
-    const sigBytes = bs58.decode(signature);
-
-    const isValidSignature = await crypto.subtle.verify(
-      { name: "ECDSA", hash: "SHA-256" },
-      await crypto.subtle.importKey(
-        "raw",
-        pubKey.toBytes(),
-        { name: "ECDSA", namedCurve: "P-256" },
-        false,
-        ["verify"]
-      ),
-      sigBytes,
-      new TextEncoder().encode(message)
-    );
-
-    if (!isValidSignature) {
-      return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+    const telegramId = await getTelegramIdByWallet(walletAddress)
+    if (!telegramId) {
+      return NextResponse.json({ error: "Wallet not linked to Telegram" }, { status: 403 })
     }
 
-    // Save message into DB
+    const encryptedKey = await getEncryptedPrivateKey(telegramId)
+    if (!encryptedKey) {
+      return NextResponse.json({ error: "No custodial key available" }, { status: 400 })
+    }
+
+    const result = await sendOnChainMessage(encryptedKey, toWallet, message)
+
     await saveMessage({
-      from: fromWallet,
+      from: walletAddress,
       to: toWallet,
       message,
-      signature,
-      isOnchain: true,
-      isRead: false
-    });
+      onChain: true,
+      txSignature: result.signature,
+    })
 
     return NextResponse.json({
       success: true,
-      message: "Message sent and verified on-chain."
-    });
-  } catch (err) {
-    console.error("send-onchain error:", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+      signature: result.signature,
+      explorerUrl: result.explorerUrl,
+    })
+  } catch (error) {
+    console.error("send-onchain error:", error)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

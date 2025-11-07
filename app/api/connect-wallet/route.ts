@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save the wallet connection
-    connectWallet(userId, walletAddress)
+    await connectWallet(userId, walletAddress)
 
     try {
       await sendMessage(

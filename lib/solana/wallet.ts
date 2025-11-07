@@ -1,13 +1,14 @@
 import { Keypair } from "@solana/web3.js"
-import * as crypto from "crypto"
+import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto"
+import { Buffer } from "node:buffer"
 
 const ENCRYPTION_KEY = process.env.WALLET_ENCRYPTION_KEY || "default-key-change-in-production-32bytes!!"
 
 export function encryptPrivateKey(privateKey: Uint8Array): string {
   console.log("[v0] Encrypting private key, length:", privateKey.length)
 
-  const iv = crypto.randomBytes(16)
-  const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY.slice(0, 32)), iv)
+  const iv = randomBytes(16)
+  const cipher = createCipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY.slice(0, 32)), iv)
 
   let encrypted = cipher.update(Buffer.from(privateKey))
   encrypted = Buffer.concat([encrypted, cipher.final()])
@@ -33,7 +34,7 @@ export function decryptPrivateKey(encryptedKey: string): Uint8Array {
   const iv = Buffer.from(parts[0], "hex")
   const encryptedData = Buffer.from(parts[1], "hex")
 
-  const decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY.slice(0, 32)), iv)
+  const decipher = createDecipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY.slice(0, 32)), iv)
 
   let decrypted = decipher.update(encryptedData)
   decrypted = Buffer.concat([decrypted, decipher.final()])

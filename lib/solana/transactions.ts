@@ -1,5 +1,5 @@
 import { Connection, PublicKey, TransactionInstruction, Transaction, SystemProgram } from "@solana/web3.js"
-import { Buffer } from "buffer"
+import { Buffer } from "node:buffer"
 import { getKeypairFromEncrypted } from "./wallet"
 
 const RPC_URL = "https://solana-mainnet.g.alchemy.com/v2/CB96lmCb3cPLg_voLlDsm"

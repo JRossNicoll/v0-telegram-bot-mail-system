@@ -1,5 +1,10 @@
-const BOT_TOKEN = "8200042995:AAGrZRpMwlUKrHC_aYEgDjluYFdMFWkquWo"
-const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}`
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+
+if (!BOT_TOKEN) {
+  console.warn("[telegram] TELEGRAM_BOT_TOKEN is not configured. Telegram API calls will fail.")
+}
+
+const TELEGRAM_API = BOT_TOKEN ? `https://api.telegram.org/bot${BOT_TOKEN}` : null
 
 export async function sendMessage(
   chatId: number,
@@ -9,6 +14,10 @@ export async function sendMessage(
     reply_markup?: any
   },
 ) {
+  if (!TELEGRAM_API) {
+    throw new Error("Telegram bot token is not configured")
+  }
+
   try {
     const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
       method: "POST",
@@ -38,6 +47,10 @@ export async function sendMessage(
 }
 
 export async function setWebhook(webhookUrl: string) {
+  if (!TELEGRAM_API) {
+    throw new Error("Telegram bot token is not configured")
+  }
+
   try {
     const response = await fetch(`${TELEGRAM_API}/setWebhook`, {
       method: "POST",
@@ -64,6 +77,10 @@ export async function setWebhook(webhookUrl: string) {
 }
 
 export async function getWebhookInfo() {
+  if (!TELEGRAM_API) {
+    throw new Error("Telegram bot token is not configured")
+  }
+
   try {
     const response = await fetch(`${TELEGRAM_API}/getWebhookInfo`)
     const data = await response.json()
@@ -80,6 +97,10 @@ export async function getWebhookInfo() {
 }
 
 export async function deleteWebhook() {
+  if (!TELEGRAM_API) {
+    throw new Error("Telegram bot token is not configured")
+  }
+
   try {
     const response = await fetch(`${TELEGRAM_API}/deleteWebhook`, {
       method: "POST",

@@ -9,7 +9,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Wallet and messageId required" }, { status: 400 })
     }
 
-    await markMessageAsRead(wallet, messageId)
+    const updated = await markMessageAsRead(wallet, messageId)
+
+    if (!updated) {
+      return NextResponse.json({ error: "Message not found" }, { status: 404 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
