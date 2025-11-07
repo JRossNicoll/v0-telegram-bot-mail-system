@@ -1,29 +1,26 @@
 "use client"
 
 import { PrivyProvider } from "@privy-io/react-auth"
+import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana"
 import type React from "react"
 
 export function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || "cmhom9lw900d0lk0cgeufxjsj"}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
       config={{
-        appearance: {
-          theme: "light",
-          accentColor: "#16CE5E",
-          logo: "/logo.png",
-          showWalletLoginFirst: true,
-          walletChainType: "solana-only",
-          walletList: ["phantom", "solflare", "detected_solana_wallets"],
-        },
         loginMethods: ["wallet"],
-        embeddedWallets: {
-          createOnLogin: "off",
+        defaultChain: "solana",
+        supportedChains: ["solana"],
+        embeddedWallets: { solana: true, evm: false },
+        externalWallets: {
+          solana: {
+            connectors: toSolanaWalletConnectors({
+              shouldAutoConnect: false,
+            }),
+          },
         },
-        legal: {
-          termsAndConditionsUrl: undefined,
-          privacyPolicyUrl: undefined,
-        },
+        walletConnectCloudProjectId: undefined,
       }}
     >
       {children}
