@@ -1,37 +1,24 @@
-"use client"
+"use client";
 
-import { PrivyProvider } from "@privy-io/react-auth"
-import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana"
-import { useMemo, type ReactNode } from "react"
+import { PrivyProvider } from "@privy-io/react-auth";
 
-export default function PrivyProviderWrapper({ children }: { children: ReactNode }) {
-  const solanaConnectors = useMemo(() => toSolanaWalletConnectors(), [])
-  const appId = process.env.NEXT_PUBLIC_PRIVY_APP_ID
-
-  if (!appId) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[Privy] NEXT_PUBLIC_PRIVY_APP_ID is not set. Rendering children without PrivyProvider.")
-    }
-    return <>{children}</>
-  }
-
+export default function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
-      appId={appId}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={{
-        loginMethods: ["wallet"],
         appearance: {
           theme: "dark",
           accentColor: "#8b5cf6",
         },
-        externalWallets: {
-          solana: {
-            connectors: solanaConnectors,
-          },
-        },
+        loginMethods: ["wallet"],
+        walletChains: ["solana"],
+        solana: { walletConnectEnabled: true },
+        embeddedWallets: { enabled: false },
+        siws: { enabled: true }, // ✅ critical
       }}
     >
       {children}
     </PrivyProvider>
-  )
+  );
 }
