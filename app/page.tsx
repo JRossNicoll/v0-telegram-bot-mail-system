@@ -1,67 +1,32 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Loader2, Lock, Wallet } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import Image from "next/image"
+import { Lock } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { usePrivy } from "@privy-io/react-auth"
+
+import { WalletConnectButton } from "@/components/WalletConnectButton"
 
 export default function Home() {
   const router = useRouter()
-  const { ready, authenticated, user, login } = usePrivy()
-  const [isConnecting, setIsConnecting] = useState(false)
+  const { ready, authenticated, user } = usePrivy()
 
   useEffect(() => {
-    console.log("[v0] Privy ready:", ready, "authenticated:", authenticated)
-    if (ready && authenticated && user) {
-      const solanaWallet = user.linkedAccounts.find(
-        (account) => account.type === "wallet" && account.chainType === "solana",
-      )
-
-      if (solanaWallet && "address" in solanaWallet) {
-        const walletAddress = solanaWallet.address
-        console.log("[v0] Already authenticated with wallet:", walletAddress)
-        localStorage.setItem("walletAddress", walletAddress)
-        router.push("/inbox")
-      }
-    }
-  }, [ready, authenticated, user, router])
-
-  const handleLogin = async () => {
-    if (isConnecting) {
-      console.log("[v0] Already connecting, ignoring duplicate click")
+    if (!ready || !authenticated || !user) {
       return
     }
 
-    console.log("[v0] Connect Wallet button clicked")
-    setIsConnecting(true)
+    const solanaWallet = user.linkedAccounts.find(
+      (account) => account.type === "wallet" && account.chainType === "solana",
+    )
 
-    try {
-      await login()
-    } catch (error: any) {
-      console.error("[v0] Login error:", error)
-
-      if (error?.details?.eipCode === -32002 || error?.code === -32002) {
-        console.log("[v0] Phantom busy, retrying in 1 second...")
-        setTimeout(async () => {
-          try {
-            await login()
-          } catch (retryError) {
-            console.error("[v0] Retry failed:", retryError)
-            setIsConnecting(false)
-          }
-        }, 1000)
-      } else {
-        setIsConnecting(false)
-      }
+    if (solanaWallet && "address" in solanaWallet) {
+      const walletAddress = solanaWallet.address
+      localStorage.setItem("walletAddress", walletAddress)
+      router.push("/inbox")
     }
-  }
-
-  useEffect(() => {
-    if (authenticated) {
-      setIsConnecting(false)
-    }
-  }, [authenticated])
+  }, [ready, authenticated, user, router])
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center p-6 relative">
@@ -98,30 +63,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center justify-center gap-4">
-              {!ready ? (
-                <div className="flex items-center gap-2 text-sm text-[#16CE5E] font-semibold">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Loading...</span>
-                </div>
-              ) : (
-                <button
-                  onClick={handleLogin}
-                  disabled={!ready || isConnecting}
-                  className="w-full h-[52px] bg-[#16CE5E] hover:bg-[#14B854] text-[#000000] font-bold text-[15px] rounded-[14px] shadow-[0_8px_24px_rgba(22,206,94,0.35),0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_32px_rgba(22,206,94,0.45),0_6px_16px_rgba(0,0,0,0.16)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 hover:translate-y-[-1px]"
-                >
-                  {isConnecting ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Connecting...
-                    </>
-                  ) : (
-                    <>
-                      <Wallet className="h-5 w-5" />
-                      Connect Phantom
-                    </>
-                  )}
-                </button>
-              )}
+              <WalletConnectButton />
             </div>
 
             <div className="pt-4 border-t border-black/[0.06]">

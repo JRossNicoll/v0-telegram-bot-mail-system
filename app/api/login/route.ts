@@ -53,11 +53,31 @@ export async function POST(request: NextRequest) {
     console.log("[v0] LOGIN SUCCESS")
     console.log("[v0] ====================================")
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       walletAddress: user.walletAddress,
       telegramId,
     })
+
+    response.cookies.set({
+      name: "courier_wallet",
+      value: user.walletAddress,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    })
+
+    response.cookies.set({
+      name: "courier_telegram_id",
+      value: telegramId,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+    })
+
+    return response
   } catch (error) {
     console.error("[v0] LOGIN ERROR:", error)
     console.error("[v0] Error stack:", error instanceof Error ? error.stack : "No stack trace")

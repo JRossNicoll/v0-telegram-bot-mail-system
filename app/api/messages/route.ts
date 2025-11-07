@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getMessagesForUser } from "@/lib/storage/messages"
+import { getMessagesForWallet } from "@/lib/storage/messages"
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,12 +15,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Invalid wallet address" }, { status: 400 })
     }
 
-    const messages = await getMessagesForUser(wallet)
+    const messages = await getMessagesForWallet(wallet)
+    const normalized = messages.map((message) => ({
+      ...message,
+      read: message.isRead,
+    }))
 
     return NextResponse.json({
       wallet,
-      messages,
-      count: messages.length,
+      messages: normalized,
+      count: normalized.length,
     })
   } catch (error) {
     console.error("[v0] Error fetching messages:", error)

@@ -1,39 +1,38 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import CryptoJS from "crypto-js";
-import bs58 from "bs58";
+import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import bs58 from "bs58"
+import { getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
+import { decryptPrivateKey } from "@/lib/solana/wallet"
 
-// Utility to decrypt the private key
-function decryptPrivateKey(encrypted: string) {
-  const key = CryptoJS.enc.Utf8.parse(process.env.ENCRYPTION_KEY || "");
-  const decrypted = CryptoJS.AES.decrypt(encrypted, key);
-  return Uint8Array.from(decrypted.words, (value) => value & 0xff);
+function isValidSolanaAddress(value: unknown): value is string {
+  return typeof value === "string" && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value)
 }
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const userCookie = cookieStore.get("courier_user");
+    const cookieStore = await cookies()
+    const walletAddress = cookieStore.get("courier_wallet")?.value
 
-    if (!userCookie) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    if (!isValidSolanaAddress(walletAddress)) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
     }
 
-    const user = JSON.parse(userCookie.value);
-
-    if (!user.encryptedPrivateKey) {
-      return NextResponse.json({ error: "No private key found" }, { status: 400 });
+    const telegramId = await getTelegramIdByWallet(walletAddress)
+    if (!telegramId) {
+      return NextResponse.json({ error: "Wallet not linked to Telegram" }, { status: 403 })
     }
 
-    // Decrypt
-    const privateKeyBytes = decryptPrivateKey(user.encryptedPrivateKey);
+    const encryptedKey = await getEncryptedPrivateKey(telegramId)
+    if (!encryptedKey) {
+      return NextResponse.json({ error: "No custodial key found" }, { status: 400 })
+    }
 
-    // Convert to base58
-    const privateKeyBase58 = bs58.encode(privateKeyBytes);
+    const privateKeyBytes = decryptPrivateKey(encryptedKey)
+    const privateKeyBase58 = bs58.encode(privateKeyBytes)
 
-    return NextResponse.json({ privateKey: privateKeyBase58 });
+    return NextResponse.json({ privateKey: privateKeyBase58 })
   } catch (error) {
-    console.error("Error exporting key:", error);
-    return NextResponse.json({ error: "Failed to export key" }, { status: 500 });
+    console.error("Error exporting key:", error)
+    return NextResponse.json({ error: "Failed to export key" }, { status: 500 })
   }
 }

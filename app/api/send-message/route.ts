@@ -19,11 +19,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Invalid wallet address" }, { status: 400 })
     }
 
+    const sendOnChain = typeof onChain === "string" ? onChain === "true" : Boolean(onChain)
+
     let txSignature: string | undefined
 
-    if (onChain) {
+    if (sendOnChain) {
       // Send on-chain message
-      const encryptedKey = await getEncryptedPrivateKey(from)
+      const senderTelegramId = await getTelegramIdByWallet(from)
+      if (!senderTelegramId) {
+        return NextResponse.json(
+          { success: false, error: "Wallet not linked to Telegram. Use the Telegram bot to connect." },
+          { status: 400 },
+        )
+      }
+
+      const encryptedKey = await getEncryptedPrivateKey(senderTelegramId)
 
       if (!encryptedKey) {
         return NextResponse.json(
@@ -46,7 +56,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Save message to storage
-    await saveMessage(from, to, message, onChain, txSignature)
+    await saveMessage({
+      from,
+      to,
+      message,
+      onChain: sendOnChain,
+      txSignature,
+    })
 
     // Notify recipient via Telegram if they have an account
     const recipientTelegramId = await getTelegramIdByWallet(to)
@@ -56,7 +72,7 @@ export async function POST(request: NextRequest) {
           Number.parseInt(recipientTelegramId),
           `📬 <b>New Message</b>\n\n` +
             `From: <code>${from.slice(0, 6)}...${from.slice(-4)}</code>\n` +
-            `Type: ${onChain ? "On-Chain ⛓" : "Off-Chain 💬"}\n` +
+            `Type: ${sendOnChain ? "On-Chain ⛓" : "Off-Chain 💬"}\n` +
             `Message: <i>${message}</i>` +
             (txSignature ? `\n\n<a href="https://solscan.io/tx/${txSignature}">View Transaction →</a>` : ""),
         )

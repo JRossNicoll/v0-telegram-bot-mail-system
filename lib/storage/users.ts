@@ -1,9 +1,13 @@
 import { redis } from "@/lib/redis"
 
-interface UserData {
+const telegramKey = (telegramId: string) => `user:telegram:${telegramId}`
+const walletKey = (wallet: string) => `user:wallet:${wallet}`
+
+export interface StoredUser {
+  telegramId: string
   walletAddress: string
   encryptedPrivateKey?: string
-  connectedAt?: number
+  connectedAt: number
 }
 
 export async function connectWallet(
@@ -11,116 +15,55 @@ export async function connectWallet(
   walletAddress: string,
   encryptedPrivateKey?: string,
 ): Promise<void> {
-  console.log("[v0] === connectWallet ===")
-  console.log("[v0] Telegram ID:", telegramId)
-  console.log("[v0] Wallet Address:", walletAddress)
-  console.log("[v0] Has Encrypted Key:", !!encryptedPrivateKey)
-  console.log("[v0] Encrypted Key length:", encryptedPrivateKey?.length || 0)
-
-  const userData: UserData = {
+  const user: StoredUser = {
+    telegramId,
     walletAddress,
     encryptedPrivateKey,
     connectedAt: Date.now(),
   }
 
-  const key = `user:${telegramId}`
-  console.log("[v0] Storing to Redis key:", key)
-
-  await redis.set(key, JSON.stringify(userData))
-  console.log("[v0] Data stored successfully")
-
-  // Verify it was stored
-  const verify = await redis.get(key)
-  console.log("[v0] Verification - Data retrieved from Redis:", !!verify)
-  if (verify) {
-    const parsed = typeof verify === "string" ? JSON.parse(verify) : verify
-    console.log("[v0] Verification - Parsed data:", {
-      walletAddress: parsed.walletAddress,
-      hasEncryptedKey: !!parsed.encryptedPrivateKey,
-      connectedAt: parsed.connectedAt ? new Date(parsed.connectedAt).toISOString() : "N/A",
-    })
-  }
-  console.log("[v0] =====================")
+  await Promise.all([
+    redis.set(telegramKey(telegramId), JSON.stringify(user)),
+    redis.set(walletKey(walletAddress), JSON.stringify(user)),
+  ])
 }
 
-export async function getUser(telegramId: string): Promise<UserData | null> {
-  console.log("[v0] === getUser ===")
-  console.log("[v0] Looking up Telegram ID:", telegramId)
-  console.log("[v0] Redis key:", `user:${telegramId}`)
-
-  const userData = await redis.get<string>(`user:${telegramId}`)
-  console.log("[v0] Raw data from Redis:", userData ? "FOUND" : "NOT FOUND")
-
-  if (!userData) {
-    console.log("[v0] No user data found")
-    console.log("[v0] ==================")
-    return null
-  }
+export async function getUser(telegramId: string): Promise<StoredUser | null> {
+  const raw = await redis.get<string>(telegramKey(telegramId))
+  if (!raw) return null
 
   try {
-    const parsed = typeof userData === "string" ? JSON.parse(userData) : userData
-    console.log("[v0] User data parsed successfully:", {
-      walletAddress: parsed.walletAddress,
-      hasEncryptedKey: !!parsed.encryptedPrivateKey,
-      connectedAt: parsed.connectedAt ? new Date(parsed.connectedAt).toISOString() : "N/A",
-    })
-    console.log("[v0] ==================")
-    return parsed
+    return JSON.parse(raw) as StoredUser
   } catch (error) {
-    console.error("[v0] Error parsing user data:", error)
-    console.log("[v0] ==================")
+    console.error("[storage] Failed to parse user for Telegram ID", telegramId, error)
     return null
   }
 }
 
 export async function saveUserWallet(telegramId: string, walletAddress: string): Promise<void> {
-  await redis.set(`user:${telegramId}`, JSON.stringify({ walletAddress }))
+  const existing = await getUser(telegramId)
+  await connectWallet(telegramId, walletAddress, existing?.encryptedPrivateKey)
 }
 
 export async function getUserWallet(telegramId: string): Promise<string | null> {
   const user = await getUser(telegramId)
-  return user?.walletAddress || null
+  return user?.walletAddress ?? null
 }
 
 export async function getEncryptedPrivateKey(telegramId: string): Promise<string | null> {
   const user = await getUser(telegramId)
-  return user?.encryptedPrivateKey || null
+  return user?.encryptedPrivateKey ?? null
 }
 
 export async function getTelegramIdByWallet(walletAddress: string): Promise<string | null> {
-  console.log("[v0] === getTelegramIdByWallet ===")
-  console.log("[v0] Looking up wallet:", walletAddress)
+  const raw = await redis.get<string>(walletKey(walletAddress))
+  if (!raw) return null
 
-  const keys = await redis.keys("user:*")
-  console.log("[v0] Total user keys in Redis:", keys?.length || 0)
-
-  if (!keys || keys.length === 0) {
-    console.log("[v0] No user keys found in Redis")
-    console.log("[v0] =================================")
+  try {
+    const parsed = JSON.parse(raw) as StoredUser
+    return parsed.telegramId
+  } catch (error) {
+    console.error("[storage] Failed to parse wallet mapping", walletAddress, error)
     return null
   }
-
-  for (const key of keys) {
-    try {
-      const userDataStr = await redis.get<string>(key)
-      if (!userDataStr) continue
-
-      const userData = typeof userDataStr === "string" ? JSON.parse(userDataStr) : userDataStr
-      if (userData.walletAddress === walletAddress) {
-        const telegramId = key.replace("user:", "")
-        console.log("[v0] MATCH FOUND!")
-        console.log("[v0] Telegram ID:", telegramId)
-        console.log("[v0] Wallet:", userData.walletAddress)
-        console.log("[v0] =================================")
-        return telegramId
-      }
-    } catch (error) {
-      console.error("[v0] Error parsing user data for key:", key, error)
-      continue
-    }
-  }
-
-  console.log("[v0] No matching wallet found")
-  console.log("[v0] =================================")
-  return null
 }

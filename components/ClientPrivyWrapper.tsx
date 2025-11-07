@@ -1,11 +1,8 @@
-"use client";
+"use client"
 
-import { PrivyProviderWrapper } from "./privy-provider";
+import PrivyProviderWrapper from "@/app/privy-provider"
+import type { ReactNode } from "react"
 
-export default function ClientPrivyWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <PrivyProviderWrapper>{children}</PrivyProviderWrapper>;
+export default function ClientPrivyWrapper({ children }: { children: ReactNode }) {
+  return <PrivyProviderWrapper>{children}</PrivyProviderWrapper>
 }
