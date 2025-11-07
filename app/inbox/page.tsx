@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { usePrivy } from "@privy-io/react-auth"
-import { WalletButton } from "@/components/wallet-button"
+import { WalletConnectButton } from "@/components/wallet-button"
 
 interface Message {
   from: string
@@ -456,7 +456,7 @@ export default function InboxPage() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              <WalletButton />
+              <WalletConnectButton />
 
               <Button
                 variant="ghost"

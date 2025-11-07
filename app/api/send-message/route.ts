@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { saveMessage } from "@/lib/storage/messages"
 import { getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
 import { sendOnChainMessage } from "@/lib/solana/transactions"
-import { sendMessage as sendTelegramMessage } from "@/lib/telegram/api"
+import { sendTelegramMessage as sendTelegramMessage } from "@/lib/telegram/api"
 
 export async function POST(request: NextRequest) {
   try {

@@ -12,7 +12,7 @@ import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
 // Small internal button for connect/disconnect
-function InnerWalletButton() {
+function InnerWalletConnectButton() {
   const { connected, connecting, connect, disconnect, publicKey } = useWallet();
 
   const onConnect = useCallback(async () => {
@@ -52,7 +52,7 @@ function InnerWalletButton() {
 }
 
 // Exported component you can drop anywhere in your UI
-export default function WalletButton() {
+export default function WalletConnectButton() {
   const network = WalletAdapterNetwork.Mainnet; // or Devnet/Testnet
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
@@ -61,7 +61,7 @@ export default function WalletButton() {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <InnerWalletButton />
+        <InnerWalletConnectButton />
       </WalletProvider>
     </ConnectionProvider>
   );
