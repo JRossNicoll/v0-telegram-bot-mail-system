@@ -1,15 +1,16 @@
-"use client";
-
 import "./globals.css";
 import PrivyProviderWrapper from "./privy-provider";
-import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+export const metadata = {
+  title: "Courier",
+  description: "Secure Telegram mail inbox",
+    generator: 'v0.app'
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body>
         <PrivyProviderWrapper>
           {children}
         </PrivyProviderWrapper>
@@ -17,7 +18,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-
-export const metadata = {
-      generator: 'v0.app'
-    };
