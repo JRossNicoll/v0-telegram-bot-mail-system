@@ -1,20 +1,25 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { setWebhook } from "@/lib/telegram/api"
+import { NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  try {
-    const { url } = await request.json()
+export const dynamic = "force-dynamic";
 
-    if (typeof url !== "string" || url.trim().length === 0) {
-      return NextResponse.json({ success: false, error: "Webhook URL required" }, { status: 400 })
-    }
+export async function GET(req: Request) {
+  const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+  const BASE_URL = process.env.PUBLIC_BASE_URL; // e.g. https://your-app.vercel.app
+  const SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || "";
 
-    await setWebhook(url)
-
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error("[admin] Failed to set Telegram webhook:", error)
-    const message = error instanceof Error ? error.message : "Unknown error"
-    return NextResponse.json({ success: false, error: message }, { status: 500 })
+  if (!BOT_TOKEN || !BASE_URL) {
+    return NextResponse.json({ ok: false, error: "Missing env" }, { status: 400 });
   }
+
+  const api = `https://api.telegram.org/bot${BOT_TOKEN}/setWebhook`;
+  const url = `${BASE_URL}/api/telegram/webhook${SECRET ? `?secret=${SECRET}` : ""}`;
+
+  const res = await fetch(api, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url })
+  });
+
+  const data = await res.json();
+  return NextResponse.json(data);
 }
