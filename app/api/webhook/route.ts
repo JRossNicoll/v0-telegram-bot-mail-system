@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sendMessage } from "@/lib/telegram/api"
 import { connectWallet, getUser, getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
-import { saveMessage, getMessagesForUser } from "@/lib/storage/messages"
+import { saveMessage, getMessagesForWallet } from "@/lib/storage/messages"
 import { sendOnChainMessage, getWalletBalance } from "@/lib/solana/transactions"
 import {
   startSendConversation,
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true })
         }
 
-        const messages = await getMessagesForUser(user.walletAddress)
+        const messages = await getMessagesForWallet(user.walletAddress)
 
         if (messages.length === 0) {
           await sendMessage(
@@ -590,7 +590,13 @@ export async function POST(request: NextRequest) {
             }
 
             const result = await sendOnChainMessage(encryptedKey, toWallet, messageText)
-            await saveMessage(user.walletAddress, toWallet, messageText, true, result.signature)
+            await saveMessage({
+              from: user.walletAddress,
+              to: toWallet,
+              message: messageText,
+              onChain: true,
+              txSignature: result.signature,
+            })
 
             await sendMessage(
               chatId,
@@ -645,16 +651,21 @@ export async function POST(request: NextRequest) {
             )
           }
         } else {
-          await saveMessage(user.walletAddress, toWallet, messageText, false)
+          await saveMessage({
+            from: user.walletAddress,
+            to: toWallet,
+            message: messageText,
+            onChain: false,
+          })
 
           // Notify recipient if they have a Telegram account
           const recipientTelegramId = await getTelegramIdByWallet(toWallet)
           if (recipientTelegramId) {
             try {
-              await sendMessage(
-                recipientTelegramId,
-                `📬 <b>New Message</b>\n\n` +
-                  `From: <code>${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}</code>\n` +
+            await sendMessage(
+              Number.parseInt(recipientTelegramId, 10),
+              `📬 <b>New Message</b>\n\n` +
+                `From: <code>${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}</code>\n` +
                   `Message: <i>${messageText}</i>`,
                 {
                   reply_markup: {
@@ -981,7 +992,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true })
       }
 
-      const messages = await getMessagesForUser(user.walletAddress)
+      const messages = await getMessagesForWallet(user.walletAddress)
 
       if (messages.length === 0) {
         await sendMessage(chatId, "📭 Your inbox is empty")
@@ -1053,8 +1064,19 @@ export async function POST(request: NextRequest) {
       console.log("[v0] Debug command - user data:", user)
 
       // Get all users from Redis to see what's stored
-      const allUsers = await redis.hgetall("users")
-      console.log("[v0] Debug command - all users in Redis:", allUsers)
+      const telegramKeys = await redis.keys("user:telegram:*")
+      const allUsers = await Promise.all(
+        telegramKeys.map(async (key) => {
+          const raw = await redis.get<string>(key)
+          try {
+            return raw ? JSON.parse(raw) : null
+          } catch (error) {
+            console.error("[v0] Failed to parse user from", key, error)
+            return null
+          }
+        }),
+      )
+      console.log("[v0] Debug command - all users in Redis:", allUsers.filter(Boolean))
 
       await sendMessage(
         chatId,

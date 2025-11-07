@@ -65,17 +65,18 @@ export default function AdminPage() {
   const setWebhook = async () => {
     setSettingWebhook(true)
     try {
-      const BOT_TOKEN = "8200042995:AAGrZRpMwlUKrHC_aYEgDjluYFdMFWkquWo"
-      const response = await fetch(
-        `https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}`,
-      )
+      const response = await fetch("/api/admin/set-webhook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: webhookUrl }),
+      })
 
       const data = await response.json()
 
-      if (data.ok) {
+      if (data.success) {
         setStatus("Webhook set successfully! Bot is now active.")
       } else {
-        setStatus(`Failed to set webhook: ${data.description}`)
+        setStatus(`Failed to set webhook: ${data.error || "Unknown error"}`)
       }
     } catch (error) {
       setStatus("Error setting webhook")

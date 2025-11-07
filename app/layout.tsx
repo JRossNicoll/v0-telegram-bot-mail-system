@@ -1,14 +1,13 @@
 import "./globals.css";
-import type { Metadata } from "next";
 import PrivyProviderWrapper from "./privy-provider";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Courier",
-  description: "Smart Telegram Web App + Solana + Privy",
+  description: "Decentralized Solana messaging",
     generator: 'v0.app'
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>

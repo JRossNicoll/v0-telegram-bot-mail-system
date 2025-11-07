@@ -1,52 +1,65 @@
 import { redis } from "@/lib/redis"
 
-type ConvState = {
-  from: string
-  to: string
-  active: boolean
-  lastMessageAt: number
+const conversationKey = (telegramId: string) => `conversation:${telegramId}`
+
+export type ConversationState = {
+  step: "awaiting_wallet" | "awaiting_message"
+  data: {
+    isOnChain?: boolean
+    toWallet?: string
+  }
+  updatedAt: number
 }
 
-// Start a conversation state
-export async function startSendConversation(from: string, to: string) {
-  await redis.set(
-    `conv:${from}:${to}`,
-    JSON.stringify({
-      from,
-      to,
-      active: true,
-      lastMessageAt: Date.now(),
-    })
-  )
+const CONVERSATION_TTL_SECONDS = 15 * 60
+
+export async function startSendConversation(telegramId: string, isOnChain: boolean) {
+  const state: ConversationState = {
+    step: "awaiting_wallet",
+    data: { isOnChain },
+    updatedAt: Date.now(),
+  }
+
+  await redis.set(conversationKey(telegramId), JSON.stringify(state), {
+    ex: CONVERSATION_TTL_SECONDS,
+  })
 }
 
-// Get current conversation state
-export async function getConversationState(from: string, to: string) {
-  const raw = await redis.get(`conv:${from}:${to}`)
+export async function getConversationState(telegramId: string): Promise<ConversationState | null> {
+  const raw = await redis.get<string>(conversationKey(telegramId))
   if (!raw) return null
-  return JSON.parse(raw) as ConvState
+
+  try {
+    return JSON.parse(raw) as ConversationState
+  } catch (error) {
+    console.error("[storage] Failed to parse conversation state", telegramId, error)
+    return null
+  }
 }
 
-// Update convo timestamp / data
-export async function updateConversationState(from: string, to: string) {
-  await redis.set(
-    `conv:${from}:${to}`,
-    JSON.stringify({
-      from,
-      to,
-      active: true,
-      lastMessageAt: Date.now(),
-    })
-  )
+type ConversationUpdate = {
+  step?: ConversationState["step"]
+  data?: Partial<ConversationState["data"]>
 }
 
-// Reset conversation
-export async function clearConversation(from: string, to: string) {
-  await redis.del(`conv:${from}:${to}`)
+export async function updateConversationState(telegramId: string, update: ConversationUpdate) {
+  const existing = (await getConversationState(telegramId)) ?? {
+    step: "awaiting_wallet" as const,
+    data: {},
+    updatedAt: Date.now(),
+  }
+
+  const next: ConversationState = {
+    step: update.step ?? existing.step,
+    data: { ...existing.data, ...update.data },
+    updatedAt: Date.now(),
+  }
+
+  await redis.set(conversationKey(telegramId), JSON.stringify(next), {
+    ex: CONVERSATION_TTL_SECONDS,
+  })
 }
 
-// List conversation partners
-export async function getConversationPartners(wallet: string) {
-  const keys = await redis.keys(`conv:${wallet}:*`)
-  return keys.map((key) => key.split(":")[2])
+export async function clearConversation(telegramId: string) {
+  await redis.del(conversationKey(telegramId))
 }

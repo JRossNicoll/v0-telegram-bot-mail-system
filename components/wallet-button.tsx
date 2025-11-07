@@ -1,52 +1,48 @@
-"use client"
+"use client";
 
-import { usePrivy } from "@privy-io/react-auth"
-import { Button } from "@/components/ui/button"
-import { Wallet, LogOut } from "lucide-react"
+import { usePrivy } from "@privy-io/react-auth";
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 
-export function WalletButton() {
-  const { ready, authenticated, login, logout, user } = usePrivy()
+export default function ConnectWallet() {
+  const { ready, authenticated, login, logout } = usePrivy();
 
-  if (!ready) {
-    return null
-  }
+  const connectPhantom = async () => {
+    try {
+      const phantom = new PhantomWalletAdapter();
+      await phantom.connect();
 
-  if (!authenticated) {
-    return (
-      <Button
-        onClick={login}
-        size="sm"
-        className="bg-[#16CE5E] hover:bg-[#14B854] text-[#000000] font-bold h-9 px-4 rounded-lg"
-      >
-        <Wallet className="h-4 w-4 mr-2" />
-        Connect
-      </Button>
-    )
-  }
+      const publicKey = phantom.publicKey?.toString();
+      if (!publicKey) throw new Error("Wallet connection failed");
 
-  const solanaWallet = user?.linkedAccounts.find(
-    (account) => account.type === "wallet" && account.chainType === "solana",
-  )
-  const walletAddress = solanaWallet && "address" in solanaWallet ? solanaWallet.address : ""
+      const message = `Login to Courier\nWallet: ${publicKey}\nTimestamp: ${Date.now()}`;
+      const encoded = new TextEncoder().encode(message);
+      const signed = await phantom.signMessage(encoded);
 
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 4)}...${address.slice(-4)}`
-  }
+      await login({
+        wallet: {
+          chain: "solana",
+          address: publicKey,
+          signature: Buffer.from(signed.signature).toString("base64"),
+          message,
+        },
+      });
+
+      console.log("[✅] Phantom login success");
+
+    } catch (err) {
+      console.error("[❌] Wallet login failed:", err);
+      alert("Wallet login failed. Check console.");
+    }
+  };
+
+  if (!ready) return null;
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#16CE5E]/10 rounded-lg">
-        <div className="w-2 h-2 bg-[#16CE5E] rounded-full" />
-        <span className="text-xs font-mono text-[#000000] font-semibold">{formatAddress(walletAddress)}</span>
-      </div>
-      <Button
-        onClick={logout}
-        variant="ghost"
-        size="sm"
-        className="text-[#000000]/60 hover:text-[#000000] hover:bg-black/5 h-9 px-3 rounded-lg"
-      >
-        <LogOut className="h-4 w-4" />
-      </Button>
-    </div>
-  )
+    <button
+      className="px-4 py-2 bg-purple-600 rounded text-white"
+      onClick={authenticated ? logout : connectPhantom}
+    >
+      {authenticated ? "Logout" : "Connect Phantom"}
+    </button>
+  );
 }

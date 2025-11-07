@@ -23,7 +23,6 @@ import {
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { useWallet } from "@solana/wallet-adapter-react"
 import { usePrivy } from "@privy-io/react-auth"
 import { WalletButton } from "@/components/wallet-button"
 
@@ -53,7 +52,7 @@ export default function InboxPage() {
   const [sending, setSending] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
-  const { publicKey, connected } = useWallet()
+  const [walletSource, setWalletSource] = useState<"external" | "custodial">("custodial")
   const { ready, authenticated, user } = usePrivy()
   const [isTelegramMiniApp, setIsTelegramMiniApp] = useState(false)
 
@@ -71,7 +70,9 @@ export default function InboxPage() {
         console.log("[v0] Privy wallet authenticated:", connectedAddress)
         setWalletAddress(connectedAddress)
         setIsAuthenticated(true)
+        setWalletSource("external")
         localStorage.setItem("walletAddress", connectedAddress)
+        localStorage.setItem("walletSource", "external")
         loadMessages(connectedAddress)
         return
       }
@@ -79,12 +80,14 @@ export default function InboxPage() {
 
     // Fallback to localStorage
     const savedWallet = localStorage.getItem("walletAddress")
+    const savedSource = localStorage.getItem("walletSource")
     const notifStatus = localStorage.getItem("notifications") === "enabled"
 
     if (savedWallet) {
       setWalletAddress(savedWallet)
       setIsAuthenticated(true)
       setNotificationsEnabled(notifStatus)
+      setWalletSource(savedSource === "external" ? "external" : "custodial")
       loadMessages(savedWallet)
     } else if (ready && !authenticated) {
       router.push("/")
@@ -188,6 +191,8 @@ export default function InboxPage() {
   const handleLogout = () => {
     localStorage.removeItem("walletAddress")
     localStorage.removeItem("notifications")
+    localStorage.removeItem("walletSource")
+    setWalletSource("custodial")
     router.push("/")
   }
 
@@ -491,7 +496,7 @@ export default function InboxPage() {
                   <div className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-black/[0.06] py-2 z-10">
                     <div className="px-4 py-3 border-b border-black/[0.06]">
                       <p className="text-xs text-[#000000]/50 font-medium mb-1 tracking-tight">
-                        {connected ? "Connected Wallet" : "Custodial Wallet"}
+                        {walletSource === "external" ? "Connected Wallet" : "Custodial Wallet"}
                       </p>
                       <p className="text-sm font-mono text-[#000000] truncate tracking-tight">{walletAddress}</p>
                       {isTelegramMiniApp && (
