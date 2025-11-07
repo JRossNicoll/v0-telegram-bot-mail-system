@@ -1,20 +1,16 @@
-import "./globals.css"
-import type { Metadata } from "next"
-import type { ReactNode } from "react"
-import PrivyProviderWrapper from "./privy-provider"
+import "./globals.css";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Courier",
-  description: "Smart Telegram Web App + Solana + Privy",
-  generator: "v0.app",
-}
+  title: "Courier Mail",
+  description: "Wallet ↔ Telegram mail system",
+    generator: 'v0.app'
+};
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>
-        <PrivyProviderWrapper>{children}</PrivyProviderWrapper>
-      </body>
+      <body>{children}</body>
     </html>
-  )
+  );
 }
