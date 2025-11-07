@@ -2,7 +2,13 @@
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import type React from "react";
-import { solana } from "@privy-io/react-auth/chains"; // ✅ required
+
+// ✅ Manual Solana chain config (Privy Solana docs)
+const solanaChain = {
+  id: "solana",
+  name: "Solana",
+  rpcUrl: "https://api.mainnet-beta.solana.com",
+};
 
 export function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
   return (
@@ -17,19 +23,13 @@ export function PrivyProviderWrapper({ children }: { children: React.ReactNode }
           walletChainType: "solana-only",
           walletList: ["phantom", "solflare", "detected_solana_wallets"],
         },
+
         loginMethods: ["wallet"],
-        embeddedWallets: {
-          createOnLogin: "off",
-        },
+        embeddedWallets: { createOnLogin: "off" },
 
-        // ✅ REQUIRED FOR SOLANA
-        supportedChains: [solana],
-        defaultChain: solana,
-
-        legal: {
-          termsAndConditionsUrl: undefined,
-          privacyPolicyUrl: undefined,
-        },
+        // ✅ Must explicitly define chain for Solana
+        supportedChains: [solanaChain],
+        defaultChain: solanaChain,
       }}
     >
       {children}
