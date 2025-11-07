@@ -1,61 +1,62 @@
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef } from "react";
 
-import { PrivyProvider, usePrivy, useWallets } from "@privy-io/react-auth"
-import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana"
-import type React from "react"
+import { PrivyProvider, usePrivy, useWallets } from "@privy-io/react-auth";
+import { toSolanaWalletConnectors } from "@privy-io/react-auth/solana";
+import type React from "react";
 
-import { useSolanaLogin } from "@/lib/auth/use-solana-login"
+import { useSolanaLogin } from "@/lib/auth/use-solana-login";
+
+const solanaConnectors =
+  typeof window !== "undefined"
+    ? toSolanaWalletConnectors({ shouldAutoConnect: false })
+    : [];
 
 function SolanaSiwsHandler() {
-  const { ready, authenticated } = usePrivy()
-  const { wallets } = useWallets()
-  const { login } = useSolanaLogin()
-  const isLoggingIn = useRef(false)
+  const { ready, authenticated } = usePrivy();
+  const { wallets } = useWallets();
+  const { login } = useSolanaLogin();
+  const isLoggingIn = useRef(false);
 
   useEffect(() => {
     if (!ready || authenticated || isLoggingIn.current) {
-      return
+      return;
     }
 
     const hasConnectedSolanaWallet = wallets.some((wallet) => {
-      const chain = (wallet as any).chain ?? wallet.type ?? (wallet as any).chainType
-      return chain === "solana"
-    })
+      const chain = (wallet as any).chain ?? wallet.type ?? (wallet as any).chainType;
+      return chain === "solana";
+    });
 
     if (!hasConnectedSolanaWallet) {
-      return
+      return;
     }
 
-    isLoggingIn.current = true
+    isLoggingIn.current = true;
     login()
       .catch((error) => {
-        console.error("[v0] Solana SIWS login failed:", error)
+        console.error("[v0] Solana SIWS login failed:", error);
       })
       .finally(() => {
-        isLoggingIn.current = false
-      })
-  }, [ready, authenticated, wallets, login])
+        isLoggingIn.current = false;
+      });
+  }, [ready, authenticated, wallets, login]);
 
-  return null
+  return null;
 }
 
 export function PrivyProviderWrapper({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       config={{
         loginMethods: ["wallet"],
         defaultChain: "solana",
         supportedChains: ["solana"],
         embeddedWallets: { solana: true, evm: false },
         externalWallets: {
-          solana: {
-            connectors: toSolanaWalletConnectors({
-              shouldAutoConnect: false,
-            }),
-          },
+          solana: { connectors: solanaConnectors },
         },
         walletConnectCloudProjectId: undefined,
       }}
@@ -63,5 +64,5 @@ export function PrivyProviderWrapper({ children }: { children: React.ReactNode }
       <SolanaSiwsHandler />
       {children}
     </PrivyProvider>
-  )
+  );
 }
