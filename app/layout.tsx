@@ -1,5 +1,3 @@
-"use client";
-
 import type { Metadata } from "next";
 import type React from "react";
 
@@ -7,32 +5,8 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Script from "next/script";
 
-import { PrivyProviderWrapper } from "@/components/privy-provider";
-
-// If you want these fonts loaded, keep as-is; if not, you can remove.
-import {
-  Geist,
-  Geist_Mono,
-  Source_Serif_4,
-  Geist as V0_Font_Geist,
-  Geist_Mono as V0_Font_Geist_Mono,
-  Source_Serif_4 as V0_Font_Source_Serif_4,
-} from "next/font/google";
-
-// Initialize fonts (these are fine to keep even if unused)
-const _geist = V0_Font_Geist({ subsets: ["latin"], weight: ["100","200","300","400","500","600","700","800","900"] });
-const _geistMono = V0_Font_Geist_Mono({ subsets: ["latin"], weight: ["100","200","300","400","500","600","700","800","900"] });
-const _sourceSerif4 = V0_Font_Source_Serif_4({ subsets: ["latin"], weight: ["200","300","400","500","600","700","800","900"] });
-
-const geist = Geist({ subsets: ["latin"], weight: ["100","200","300","400","500","600","700","800","900"] });
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  weight: ["100","200","300","400","500","600","700","800","900"],
-});
-const sourceSerif4 = Source_Serif_4({
-  subsets: ["latin"],
-  weight: ["200","300","400","500","600","700","800","900"],
-});
+// ✅ Client wrapper to run Privy on the client only
+import ClientPrivyWrapper from "@/components/ClientPrivyWrapper";
 
 export const metadata: Metadata = {
   title: "Courier - Private. Fast. Encrypted.",
@@ -51,10 +25,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <PrivyProviderWrapper>{children}</PrivyProviderWrapper>
+        {/* ✅ Privy must wrap the app on the client only */}
+        <ClientPrivyWrapper>
+          {children}
+        </ClientPrivyWrapper>
+
+        {/* ✅ Analytics */}
         <Analytics />
-        {/* Telegram Mini-App SDK */}
-        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
+
+        {/* ✅ Telegram Mini App SDK */}
+        <Script
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
       </body>
     </html>
   );
