@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sendMessage } from "@/lib/telegram/api"
 import { connectWallet, getUser, getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
-import { saveMessage, getMessagesForWallet } from "@/lib/storage/messages"
+import { saveMessage, getMessagesForUser } from "@/lib/storage/messages"
 import { sendOnChainMessage, getWalletBalance } from "@/lib/solana/transactions"
 import {
   startSendConversation,
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ ok: true })
         }
 
-        const messages = await getMessagesForWallet(user.walletAddress)
+        const messages = await getMessagesForUser(user.walletAddress)
 
         if (messages.length === 0) {
           await sendMessage(
@@ -981,7 +981,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ ok: true })
       }
 
-      const messages = await getMessagesForWallet(user.walletAddress)
+      const messages = await getMessagesForUser(user.walletAddress)
 
       if (messages.length === 0) {
         await sendMessage(chatId, "📭 Your inbox is empty")

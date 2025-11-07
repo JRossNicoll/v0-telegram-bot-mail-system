@@ -1,59 +1,74 @@
-import { redis } from "@/lib/redis";
+import { redis } from "@/lib/redis"
 
-const MESSAGES_KEY = "courier:messages";
+export type StoredMessage = {
+  id: string
+  from: string
+  to: string
+  message: string
+  signature?: string
+  isOnchain: boolean
+  isRead: boolean
+  timestamp: number
+}
 
-export type MessageRecord = {
-  id: string;
-  from: string;
-  to: string;
-  message: string;
-  signature?: string;
-  isOnchain?: boolean;
-  isRead?: boolean;
-  createdAt: number;
-};
-
+// Save a message for sender + receiver
 export async function saveMessage(
   from: string,
   to: string,
   message: string,
-  signature?: string,
-  isOnchain: boolean = false
+  signature?: string
 ) {
-  const msg: MessageRecord = {
-    id: crypto.randomUUID(),
+  const id = crypto.randomUUID()
+  const timestamp = Date.now()
+
+  const payload: StoredMessage = {
+    id,
     from,
     to,
     message,
     signature,
-    isOnchain,
+    isOnchain: Boolean(signature),
     isRead: false,
-    createdAt: Date.now(),
-  };
+    timestamp,
+  }
 
-  await redis.lpush(MESSAGES_KEY, JSON.stringify(msg));
-  return msg;
+  const stringValue = JSON.stringify(payload)
+
+  // store for receiver
+  await redis.lpush(`messages:${to}`, stringValue)
+
+  // also store for sender history
+  await redis.lpush(`messages:${from}`, stringValue)
+
+  return id
 }
 
-export async function getMessagesForUser(wallet: string) {
-  const messages = await redis.lrange(MESSAGES_KEY, 0, -1);
-  return messages
-    .map((m) => JSON.parse(m) as MessageRecord)
-    .filter((m) => m.to === wallet || m.from === wallet)
-    .sort((a, b) => b.createdAt - a.createdAt);
+// Fetch messages for a wallet
+export async function getMessagesForWallet(wallet: string) {
+  const data = await redis.lrange(`messages:${wallet}`, 0, 200)
+  return data.map((x) => JSON.parse(x) as StoredMessage)
 }
 
-export async function markRead(id: string) {
-  const messages = await redis.lrange(MESSAGES_KEY, 0, -1);
+// Mark a message as read
+export async function markMessageAsRead(wallet: string, messageId: string) {
+  const listKey = `messages:${wallet}`
+  const messages = await redis.lrange(listKey, 0, 200)
 
-  for (const m of messages) {
-    const parsed = JSON.parse(m) as MessageRecord;
-    if (parsed.id === id) {
-      parsed.isRead = true;
-      await redis.lrem(MESSAGES_KEY, 1, m);
-      await redis.lpush(MESSAGES_KEY, JSON.stringify(parsed));
-      return true;
+  for (const raw of messages) {
+    const parsed = JSON.parse(raw) as StoredMessage
+    if (parsed.id === messageId) {
+      parsed.isRead = true
+      await redis.lrem(listKey, 1, raw)
+      await redis.lpush(listKey, JSON.stringify(parsed))
+      return true
     }
   }
-  return false;
+
+  return false
+}
+
+// Count unread messages
+export async function getUnreadCount(wallet: string) {
+  const messages = await getMessagesForWallet(wallet)
+  return messages.filter((m) => !m.isRead).length
 }
