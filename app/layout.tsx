@@ -1,43 +1,42 @@
 import type { Metadata } from "next";
-import type React from "react";
-
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
+import ClientOnlyPrivy from "@/components/ClientOnlyPrivy";
 
-// ✅ Client wrapper to run Privy on the client only
-import ClientPrivyWrapper from "@/components/ClientPrivyWrapper";
+import {
+  Geist,
+  Geist_Mono,
+  Source_Serif_4,
+} from "next/font/google";
+
+const geist = Geist({ subsets: ["latin"], weight: ["100","200","300","400","500","600","700","800","900"] });
+const geistMono = Geist_Mono({ subsets: ["latin"], weight: ["100","200","300","400","500","600","700","800","900"] });
+const sourceSerif4 = Source_Serif_4({ subsets: ["latin"], weight: ["200","300","400","500","600","700","800","900"] });
 
 export const metadata: Metadata = {
   title: "Courier - Private. Fast. Encrypted.",
   description: "Send on-chain and off-chain messages to Solana wallets via Telegram",
-  generator: "v0.app",
   icons: {
     icon: "/favicon.ico",
   },
+    generator: 'v0.app'
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className="font-sans antialiased">
-        {/* ✅ Privy must wrap the app on the client only */}
-        <ClientPrivyWrapper>
+      <body className={`font-sans antialiased`}>
+        <ClientOnlyPrivy>
           {children}
-        </ClientPrivyWrapper>
+        </ClientOnlyPrivy>
 
-        {/* ✅ Analytics */}
         <Analytics />
-
-        {/* ✅ Telegram Mini App SDK */}
-        <Script
-          src="https://telegram.org/js/telegram-web-app.js"
-          strategy="beforeInteractive"
-        />
+        <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive" />
       </body>
     </html>
   );
