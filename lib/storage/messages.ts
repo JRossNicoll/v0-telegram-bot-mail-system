@@ -63,3 +63,7 @@ export async function markRead(wallet: string, id: string) {
   }
   return changed;
 }
+// ✅ Alias to match app's expected function name
+export async function getMessagesForUser(wallet: string) {
+  return getMessagesForWallet(wallet);
+}
