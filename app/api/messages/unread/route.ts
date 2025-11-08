@@ -1,20 +1,12 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { getUnreadCount } from "@/lib/storage/messages"
+import { NextResponse } from "next/server";
+import { getUnreadCount } from "@/lib/storage/messages";
 
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const wallet = searchParams.get("wallet")
+export const dynamic = "force-dynamic";
 
-    if (!wallet) {
-      return NextResponse.json({ error: "Wallet address required" }, { status: 400 })
-    }
-
-    const unreadCount = await getUnreadCount(wallet)
-
-    return NextResponse.json({ unreadCount })
-  } catch (error) {
-    console.error("[v0] Error fetching unread count:", error)
-    return NextResponse.json({ error: "Failed to fetch unread count" }, { status: 500 })
-  }
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const wallet = url.searchParams.get("wallet");
+  if (!wallet) return NextResponse.json({ error: "wallet required" }, { status: 400 });
+  const count = await getUnreadCount(wallet);
+  return NextResponse.json({ unread: count });
 }

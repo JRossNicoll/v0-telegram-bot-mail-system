@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { sendMessage } from "@/lib/telegram/api"
+import { sendTelegramMessage } from "@/lib/telegram/api"
 import { connectWallet, getUser, getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
 import { saveMessage, getMessagesForWallet } from "@/lib/storage/messages"
 import { sendOnChainMessage, getWalletBalance } from "@/lib/solana/transactions"
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       console.log("[v0] =====================================")
 
       if (data === "test_callback") {
-        await sendMessage(chatId, "✅ <b>CALLBACK WORKS!</b>\n\nButtons are functioning correctly.")
+        await sendTelegramMessage(chatId, "✅ <b>CALLBACK WORKS!</b>\n\nButtons are functioning correctly.")
         return NextResponse.json({ ok: true })
       }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         const miniAppUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://your-app.vercel.app"}/?userId=${userId}&telegram=true`
         console.log("[v0] Mini app URL:", miniAppUrl)
 
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "✨ <b>Connect Your Wallet</b>\n\n" +
             "Open the Courier app to connect your wallet:\n\n" +
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (data === "main_menu") {
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "🌟 <b>Solana Mail</b>\n\n" +
             "Decentralized messaging on Solana blockchain.\n\n" +
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         const user = await getUser(userId)
 
         if (!user) {
-          await sendMessage(chatId, "⚠️ <b>Wallet Required</b>\n\nConnect your wallet to access messages.", {
+          await sendTelegramMessage(chatId, "⚠️ <b>Wallet Required</b>\n\nConnect your wallet to access messages.", {
             reply_markup: {
               inline_keyboard: [
                 [
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
         const messages = await getMessagesForWallet(user.walletAddress)
 
         if (messages.length === 0) {
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             "📭 <b>Inbox</b>\n\n" + "No messages yet.\n\n" + `Share your address:\n<code>${user.walletAddress}</code>`,
             {
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
           inboxText += `\n<i>Showing 10 of ${messages.length} messages</i>`
         }
 
-        await sendMessage(chatId, inboxText, {
+        await sendTelegramMessage(chatId, inboxText, {
           reply_markup: {
             inline_keyboard: [
               [
@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
         const user = await getUser(userId)
 
         if (!user) {
-          await sendMessage(chatId, "⚠️ Wallet not connected", {
+          await sendTelegramMessage(chatId, "⚠️ Wallet not connected", {
             reply_markup: {
               inline_keyboard: [
                 [
@@ -206,7 +206,7 @@ export async function POST(request: NextRequest) {
 
         const balance = await getWalletBalance(user.walletAddress)
 
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           `💼 <b>Wallet</b>\n\n` +
             `<code>${user.walletAddress.slice(0, 8)}...${user.walletAddress.slice(-8)}</code>\n\n` +
@@ -259,7 +259,7 @@ export async function POST(request: NextRequest) {
 
         if (!user) {
           console.log("[v0] No user found, sending wallet required message")
-          await sendMessage(chatId, "⚠️ Wallet required", {
+          await sendTelegramMessage(chatId, "⚠️ Wallet required", {
             reply_markup: {
               inline_keyboard: [
                 [
@@ -279,7 +279,7 @@ export async function POST(request: NextRequest) {
         console.log("[v0] Balance:", balance)
 
         console.log("[v0] Sending send type options message...")
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "📤 <b>Send Message</b>\n\n" +
             "Choose delivery method:\n\n" +
@@ -325,7 +325,7 @@ export async function POST(request: NextRequest) {
         const userId = callbackQuery.from.id.toString()
         console.log("[v0] Starting on-chain send for user:", userId)
         await startSendConversation(userId, true)
-        await sendMessage(chatId, "⛓ <b>On-Chain Message</b>\n\nEnter recipient wallet address:")
+        await sendTelegramMessage(chatId, "⛓ <b>On-Chain Message</b>\n\nEnter recipient wallet address:")
         return NextResponse.json({ ok: true })
       }
 
@@ -333,12 +333,12 @@ export async function POST(request: NextRequest) {
         const userId = callbackQuery.from.id.toString()
         console.log("[v0] Starting off-chain send for user:", userId)
         await startSendConversation(userId, false)
-        await sendMessage(chatId, "💬 <b>Off-Chain Message</b>\n\nEnter recipient wallet address:")
+        await sendTelegramMessage(chatId, "💬 <b>Off-Chain Message</b>\n\nEnter recipient wallet address:")
         return NextResponse.json({ ok: true })
       }
 
       if (data === "show_help") {
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "💡 <b>How It Works</b>\n\n" +
             "<b>1. Connect Wallet</b>\n" +
@@ -380,7 +380,7 @@ export async function POST(request: NextRequest) {
       }
 
       if (data === "explain_onchain") {
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "⛓ <b>On-Chain Messaging Explained</b>\n\n" +
             "<b>How it works:</b>\n" +
@@ -423,7 +423,7 @@ export async function POST(request: NextRequest) {
         const user = await getUser(userId)
 
         if (!user || !user.encryptedPrivateKey) {
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             "⚠️ <b>No Custodial Wallet Found</b>\n\nThis feature is only available for wallets generated through the bot.",
             {
@@ -447,7 +447,7 @@ export async function POST(request: NextRequest) {
           const privateKeyBytes = decryptPrivateKey(user.encryptedPrivateKey)
           const privateKeyBase58 = bs58.encode(privateKeyBytes)
 
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             `🔑 <b>Private Key Export</b>\n\n` +
               `⚠️ <b>SECURITY WARNING:</b>\n` +
@@ -471,7 +471,7 @@ export async function POST(request: NextRequest) {
           )
         } catch (error: any) {
           console.error("[v0] Error exporting private key:", error)
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             `❌ <b>Export Failed</b>\n\n${error.message || "Failed to decrypt private key"}\n\nPlease try regenerating your wallet.`,
             {
@@ -513,7 +513,7 @@ export async function POST(request: NextRequest) {
       if (conversationState.step === "awaiting_wallet") {
         // Validate wallet address
         if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(text)) {
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             "❌ <b>Invalid Address</b>\n\n" +
               "Please enter a valid Solana wallet address (32-44 characters).\n\n" +
@@ -527,7 +527,7 @@ export async function POST(request: NextRequest) {
           data: { ...conversationState.data, toWallet: text },
         })
 
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           `✓ <b>Recipient</b>\n<code>${text.slice(0, 8)}...${text.slice(-8)}</code>\n\nEnter your message:`,
         )
@@ -538,7 +538,7 @@ export async function POST(request: NextRequest) {
         const user = await getUser(userId)
         if (!user) {
           await clearConversation(userId)
-          await sendMessage(chatId, "⚠️ Session expired. Please reconnect your wallet.")
+          await sendTelegramMessage(chatId, "⚠️ Session expired. Please reconnect your wallet.")
           return NextResponse.json({ ok: true })
         }
 
@@ -552,7 +552,7 @@ export async function POST(request: NextRequest) {
           const balance = await getWalletBalance(user.walletAddress)
 
           if (balance < 0.00001) {
-            await sendMessage(
+            await sendTelegramMessage(
               chatId,
               "⚠️ <b>Insufficient Balance</b>\n\n" +
                 `Current: ${balance.toFixed(6)} SOL\n` +
@@ -580,12 +580,12 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ ok: true })
           }
 
-          await sendMessage(chatId, "⏳ <b>Processing...</b>\n\nSigning and broadcasting transaction...")
+          await sendTelegramMessage(chatId, "⏳ <b>Processing...</b>\n\nSigning and broadcasting transaction...")
 
           try {
             const encryptedKey = await getEncryptedPrivateKey(userId)
             if (!encryptedKey) {
-              await sendMessage(chatId, "⚠️ Custodial wallet not found. Please regenerate your wallet.")
+              await sendTelegramMessage(chatId, "⚠️ Custodial wallet not found. Please regenerate your wallet.")
               return NextResponse.json({ ok: true })
             }
 
@@ -598,7 +598,7 @@ export async function POST(request: NextRequest) {
               txSignature: result.signature,
             })
 
-            await sendMessage(
+            await sendTelegramMessage(
               chatId,
               `✓ <b>Message Delivered</b>\n\n` +
                 `To: <code>${toWallet.slice(0, 6)}...${toWallet.slice(-4)}</code>\n` +
@@ -625,7 +625,7 @@ export async function POST(request: NextRequest) {
             )
           } catch (error: any) {
             console.error("[v0] On-chain send error:", error)
-            await sendMessage(
+            await sendTelegramMessage(
               chatId,
               `⚠️ <b>Transaction Failed</b>\n\n` +
                 `${error.message || "Unknown error"}\n\n` +
@@ -662,7 +662,7 @@ export async function POST(request: NextRequest) {
           const recipientTelegramId = await getTelegramIdByWallet(toWallet)
           if (recipientTelegramId) {
             try {
-            await sendMessage(
+            await sendTelegramMessage(
               Number.parseInt(recipientTelegramId, 10),
               `📬 <b>New Message</b>\n\n` +
                 `From: <code>${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}</code>\n` +
@@ -692,7 +692,7 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          await sendMessage(
+          await sendTelegramMessage(
             chatId,
             `✓ <b>Message Sent</b>\n\n` +
               `To: <code>${toWallet.slice(0, 6)}...${toWallet.slice(-4)}</code>\n` +
@@ -727,7 +727,7 @@ export async function POST(request: NextRequest) {
       const state = await getConversationState(userId)
       if (state) {
         await clearConversation(userId)
-        await sendMessage(chatId, "✓ Cancelled", {
+        await sendTelegramMessage(chatId, "✓ Cancelled", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -740,13 +740,13 @@ export async function POST(request: NextRequest) {
           },
         })
       } else {
-        await sendMessage(chatId, "No active operation to cancel")
+        await sendTelegramMessage(chatId, "No active operation to cancel")
       }
       return NextResponse.json({ ok: true })
     }
 
     if (text === "/start") {
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         "🌟 <b>Welcome to Solana Mail</b>\n\n" +
           "Decentralized messaging on Solana blockchain.\n\n" +
@@ -780,7 +780,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (text === "/help") {
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         "📬 <b>Solana Mail Bot Commands:</b>\n\n" +
           "/connect &lt;wallet_address&gt; - Link your Solana wallet\n" +
@@ -798,7 +798,7 @@ export async function POST(request: NextRequest) {
     if (text.startsWith("/connect")) {
       const parts = text.split(" ")
       if (parts.length < 2) {
-        await sendMessage(chatId, "❌ Usage: /connect &lt;wallet_address&gt;\n\nOr use the button below:", {
+        await sendTelegramMessage(chatId, "❌ Usage: /connect &lt;wallet_address&gt;\n\nOr use the button below:", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -817,13 +817,13 @@ export async function POST(request: NextRequest) {
 
       // Basic Solana address validation (base58, 32-44 chars)
       if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(walletAddress)) {
-        await sendMessage(chatId, "❌ Invalid Solana wallet address format")
+        await sendTelegramMessage(chatId, "❌ Invalid Solana wallet address format")
         return NextResponse.json({ ok: true })
       }
 
       await connectWallet(userId, walletAddress)
 
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         `✅ <b>Wallet Connected Successfully!</b>\n\n` +
           `<b>Address:</b>\n<code>${walletAddress}</code>\n\n` +
@@ -851,7 +851,7 @@ export async function POST(request: NextRequest) {
     if (text === "/wallet") {
       const user = await getUser(userId)
       if (!user) {
-        await sendMessage(chatId, "⚠️ No wallet connected", {
+        await sendTelegramMessage(chatId, "⚠️ No wallet connected", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -867,7 +867,7 @@ export async function POST(request: NextRequest) {
       }
 
       const balance = await getWalletBalance(user.walletAddress)
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         `💼 <b>Wallet</b>\n\n` +
           `<code>${user.walletAddress.slice(0, 8)}...${user.walletAddress.slice(-8)}</code>\n\n` +
@@ -908,7 +908,7 @@ export async function POST(request: NextRequest) {
       const user = await getUser(userId)
 
       if (!user) {
-        await sendMessage(chatId, "⚠️ Wallet required", {
+        await sendTelegramMessage(chatId, "⚠️ Wallet required", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -924,7 +924,7 @@ export async function POST(request: NextRequest) {
       }
 
       const balance = await getWalletBalance(user.walletAddress)
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         "📤 <b>Send Message</b>\n\n" +
           "Choose delivery method:\n\n" +
@@ -954,7 +954,7 @@ export async function POST(request: NextRequest) {
     if (text === "/sendchain") {
       const user = await getUser(userId)
       if (!user) {
-        await sendMessage(chatId, "⚠️ Connect your wallet first:", {
+        await sendTelegramMessage(chatId, "⚠️ Connect your wallet first:", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -970,14 +970,14 @@ export async function POST(request: NextRequest) {
       }
 
       await startSendConversation(userId, true)
-      await sendMessage(chatId, "⛓ <b>Send On-Chain Message</b>\n\nWhat wallet address do you want to send to?")
+      await sendTelegramMessage(chatId, "⛓ <b>Send On-Chain Message</b>\n\nWhat wallet address do you want to send to?")
       return NextResponse.json({ ok: true })
     }
 
     if (text === "/inbox") {
       const user = await getUser(userId)
       if (!user) {
-        await sendMessage(chatId, "⚠️ Connect your wallet first:", {
+        await sendTelegramMessage(chatId, "⚠️ Connect your wallet first:", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -995,7 +995,7 @@ export async function POST(request: NextRequest) {
       const messages = await getMessagesForWallet(user.walletAddress)
 
       if (messages.length === 0) {
-        await sendMessage(chatId, "📭 Your inbox is empty")
+        await sendTelegramMessage(chatId, "📭 Your inbox is empty")
         return NextResponse.json({ ok: true })
       }
 
@@ -1010,14 +1010,14 @@ export async function POST(request: NextRequest) {
         inboxText += `<b>Time:</b> ${new Date(msg.timestamp).toLocaleString()}\n\n`
       })
 
-      await sendMessage(chatId, inboxText)
+      await sendTelegramMessage(chatId, inboxText)
       return NextResponse.json({ ok: true })
     }
 
     if (text === "/balance") {
       const user = await getUser(userId)
       if (!user) {
-        await sendMessage(chatId, "❌ Connect your wallet first:", {
+        await sendTelegramMessage(chatId, "❌ Connect your wallet first:", {
           reply_markup: {
             inline_keyboard: [
               [
@@ -1034,7 +1034,7 @@ export async function POST(request: NextRequest) {
 
       try {
         const balance = await getWalletBalance(user.walletAddress)
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           `💰 <b>Wallet Balance</b>\n\n` +
             `<b>Address:</b>\n<code>${user.walletAddress}</code>\n\n` +
@@ -1053,7 +1053,7 @@ export async function POST(request: NextRequest) {
           },
         )
       } catch (error) {
-        await sendMessage(chatId, "❌ Failed to fetch balance. Please try again.")
+        await sendTelegramMessage(chatId, "❌ Failed to fetch balance. Please try again.")
       }
       return NextResponse.json({ ok: true })
     }
@@ -1078,7 +1078,7 @@ export async function POST(request: NextRequest) {
       )
       console.log("[v0] Debug command - all users in Redis:", allUsers.filter(Boolean))
 
-      await sendMessage(
+      await sendTelegramMessage(
         chatId,
         `🔍 <b>Debug Info</b>\n\n` +
           `<b>Your Telegram ID:</b> <code>${userId}</code>\n` +
@@ -1094,7 +1094,7 @@ export async function POST(request: NextRequest) {
       const user = await getUser(userId)
 
       if (!user || !user.encryptedPrivateKey) {
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           "⚠️ <b>No Custodial Wallet Found</b>\n\nThis feature is only available for wallets generated through the bot.",
           {
@@ -1118,7 +1118,7 @@ export async function POST(request: NextRequest) {
         const privateKeyBytes = decryptPrivateKey(user.encryptedPrivateKey)
         const privateKeyBase58 = bs58.encode(privateKeyBytes)
 
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           `🔑 <b>Private Key Export</b>\n\n` +
             `⚠️ <b>SECURITY WARNING:</b>\n` +
@@ -1142,7 +1142,7 @@ export async function POST(request: NextRequest) {
         )
       } catch (error: any) {
         console.error("[v0] Error exporting private key:", error)
-        await sendMessage(
+        await sendTelegramMessage(
           chatId,
           `❌ <b>Export Failed</b>\n\n${error.message || "Failed to decrypt private key"}\n\nPlease try regenerating your wallet.`,
         )
@@ -1152,7 +1152,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Unknown command
-    await sendMessage(chatId, "⚠️ Unknown command\n\nUse /help for available commands", {
+    await sendTelegramMessage(chatId, "⚠️ Unknown command\n\nUse /help for available commands", {
       reply_markup: {
         inline_keyboard: [
           [

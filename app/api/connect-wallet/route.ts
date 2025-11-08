@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { connectWallet } from "@/lib/storage/users"
-import { sendMessage } from "@/lib/telegram/api"
+import { sendTelegramMessage } from "@/lib/telegram/api"
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     await connectWallet(userId, walletAddress)
 
     try {
-      await sendMessage(
+      await sendTelegramMessage(
         Number.parseInt(userId),
         `✅ <b>Wallet Connected Successfully!</b>\n\n` +
           `<b>Address:</b>\n<code>${walletAddress}</code>\n\n` +

@@ -1,128 +1,65 @@
-import { redis } from "@/lib/redis"
-import { randomUUID } from "node:crypto"
-
-const inboxKey = (wallet: string) => `inbox:${wallet}`
-const threadsKey = (wallet: string) => `threads:${wallet}`
+import { redis } from "@/lib/redis";
 
 export type StoredMessage = {
-  id: string
-  from: string
-  to: string
-  message: string
-  timestamp: number
-  onChain: boolean
-  txSignature?: string
-  direction: "inbound" | "outbound"
-  isRead: boolean
+  id: string;
+  from: string;
+  to: string;
+  message: string;
+  signature?: string;
+  isOnchain: boolean;
+  isRead: boolean;
+  createdAt: number;
+};
+
+const KEY_MSGS_FOR_WALLET = (wallet: string) => `wallet:${wallet}:msgs`;
+const KEY_UNREAD_COUNT = (wallet: string) => `wallet:${wallet}:unread`;
+
+export async function saveMessage(
+  from: string,
+  to: string,
+  message: string,
+  signature?: string,
+  isOnchain = false
+) {
+  const now = Date.now();
+  const id = `msg_${now}_${Math.random().toString(36).slice(2, 8)}`;
+  const obj: StoredMessage = {
+    id, from, to, message, signature, isOnchain, isRead: false, createdAt: now
+  };
+  await redis.lpush(KEY_MSGS_FOR_WALLET(to), JSON.stringify(obj));
+  await redis.hincrby(KEY_UNREAD_COUNT(to), "count", 1);
+  return obj;
 }
 
-type SaveMessageInput = {
-  from: string
-  to: string
-  message: string
-  onChain?: boolean
-  txSignature?: string
-}
-
-const MAX_MESSAGES_PER_WALLET = 500
-
-async function trimInbox(wallet: string) {
-  const key = inboxKey(wallet)
-  const total = await redis.zcard(key)
-  if (total <= MAX_MESSAGES_PER_WALLET) {
-    return
-  }
-
-  const overflow = await redis.zrange<string[]>(key, 0, total - MAX_MESSAGES_PER_WALLET - 1)
-  if (overflow.length > 0) {
-    await redis.zrem(key, ...overflow)
-  }
-}
-
-export async function saveMessage(input: SaveMessageInput) {
-  const { from, to, message, onChain = false, txSignature } = input
-  const timestamp = Date.now()
-  const id = randomUUID()
-
-  const basePayload = {
-    id,
-    from,
-    to,
-    message,
-    timestamp,
-    onChain,
-    txSignature,
-  }
-
-  const outbound: StoredMessage = {
-    ...basePayload,
-    direction: "outbound",
-    isRead: true,
-  }
-
-  const inbound: StoredMessage = {
-    ...basePayload,
-    direction: "inbound",
-    isRead: false,
-  }
-
-  const outboundString = JSON.stringify(outbound)
-  const inboundString = JSON.stringify(inbound)
-
-  await Promise.all([
-    redis.zadd(inboxKey(from), { score: timestamp, member: outboundString }),
-    redis.zadd(inboxKey(to), { score: timestamp, member: inboundString }),
-    redis.sadd(threadsKey(from), to),
-    redis.sadd(threadsKey(to), from),
-  ])
-
-  await Promise.all([trimInbox(from), trimInbox(to)])
-
-  return { outbound, inbound }
-}
-
-export async function getMessagesForWallet(wallet: string): Promise<StoredMessage[]> {
-  const raw = await redis.zrange<string[]>(inboxKey(wallet), 0, -1, { rev: true })
-  const messages: StoredMessage[] = []
-
-  for (const entry of raw) {
-    try {
-      messages.push(JSON.parse(entry) as StoredMessage)
-    } catch (error) {
-      console.error("[storage] Failed to parse stored message", { wallet, entry, error })
-    }
-  }
-
-  return messages
-}
-
-export async function markMessageAsRead(wallet: string, messageId: string) {
-  const key = inboxKey(wallet)
-  const entries = await redis.zrange<string[]>(key, 0, -1)
-
-  for (const entry of entries) {
-    const parsed = JSON.parse(entry) as StoredMessage
-    if (parsed.id === messageId) {
-      if (parsed.isRead) {
-        return true
-      }
-
-      parsed.isRead = true
-      await redis.zrem(key, entry)
-      await redis.zadd(key, { score: parsed.timestamp, member: JSON.stringify(parsed) })
-      return true
-    }
-  }
-
-  return false
+export async function getMessagesForWallet(wallet: string) {
+  const raw = await redis.lrange(KEY_MSGS_FOR_WALLET(wallet), 0, 50);
+  if (!Array.isArray(raw)) return [];
+  return raw.map((r: string) => {
+    try { return JSON.parse(r) as StoredMessage } catch { return null }
+  }).filter(Boolean) as StoredMessage[];
 }
 
 export async function getUnreadCount(wallet: string) {
-  const messages = await getMessagesForWallet(wallet)
-  return messages.filter((message) => message.direction === "inbound" && !message.isRead).length
+  const c = await redis.hget(KEY_UNREAD_COUNT(wallet), "count");
+  return Number(c || 0);
 }
 
-export async function getConversationThreads(wallet: string) {
-  const members = await redis.smembers<string[]>(threadsKey(wallet))
-  return members ?? []
+export async function markRead(wallet: string, id: string) {
+  // naive: fetch, replace first occurrence with isRead=true, decrement counter
+  const list = await getMessagesForWallet(wallet);
+  let changed = false;
+  const updated = list.map(m => {
+    if (!m.isRead && m.id === id) { changed = true; return { ...m, isRead: true } }
+    return m;
+  });
+  if (changed) {
+    // Overwrite the list (simple but effective for MVP)
+    // NOTE: Upstash REST doesn't support MULTI here; for production, use ID-indexed hash/set.
+    await redis.del(KEY_MSGS_FOR_WALLET(wallet));
+    for (const m of updated.reverse()) {
+      await redis.lpush(KEY_MSGS_FOR_WALLET(wallet), JSON.stringify(m));
+    }
+    await redis.hincrby(KEY_UNREAD_COUNT(wallet), "count", -1);
+  }
+  return changed;
 }
