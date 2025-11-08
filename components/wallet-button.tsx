@@ -1,68 +1,50 @@
 "use client";
 
-import React, { useMemo, useCallback } from "react";
-import { clusterApiUrl, Connection } from "@solana/web3.js";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import {
-  ConnectionProvider,
-  WalletProvider,
-  useWallet
-} from "@solana/wallet-adapter-react";
+import { usePrivy } from "@privy-io/react-auth";
+import { useWallets } from "@privy-io/react-auth";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
-import "@solana/wallet-adapter-react-ui/styles.css";
+import { useEffect, useState } from "react";
 
-// Small internal button for connect/disconnect
-function InnerWalletConnectButton() {
-  const { connected, connecting, connect, disconnect, publicKey } = useWallet();
+export default function WalletConnectButton() {
+  const { login, authenticated, user } = usePrivy();
+  const { wallets, linkWallet } = useWallets();
+  const [phantom, setPhantom] = useState<any>(null);
 
-  const onConnect = useCallback(async () => {
-    try {
-      await connect();
-      // Optionally tell backend that this wallet is "active"
-      if (publicKey) {
-        await fetch("/api/wallet/connected", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ wallet: publicKey.toBase58() })
-        });
-      }
-    } catch (e) {
-      console.error("Wallet connect error:", e);
-      alert("Could not log in with wallet.");
-    }
-  }, [connect, publicKey]);
+  useEffect(() => {
+    const adapter = new PhantomWalletAdapter();
+    setPhantom(adapter);
+  }, []);
 
-  const onDisconnect = useCallback(async () => {
-    try {
-      await disconnect();
-    } catch (e) {
-      console.error("Wallet disconnect error:", e);
-    }
-  }, [disconnect]);
+  async function connectPhantom() {
+    if (!phantom) return;
+    await phantom.connect();
+    const publicKey = phantom.publicKey?.toString();
+    if (!publicKey) return;
 
+    await linkWallet({
+      chainType: "solana",
+      address: publicKey,
+    });
+  }
+
+  if (!authenticated) {
+    return (
+      <button
+        onClick={login}
+        className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+      >
+        Connect Wallet
+      </button>
+    );
+  }
+
+  const solWallet = wallets?.find((w: any) => w.chainType === "solana");
   return (
     <button
-      onClick={connected ? onDisconnect : onConnect}
-      disabled={connecting}
-      className="px-4 py-2 rounded-xl border border-black/10 shadow-sm hover:shadow transition"
+      onClick={!solWallet ? connectPhantom : undefined}
+      className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
     >
-      {connecting ? "Connecting…" : connected ? `Disconnect ${publicKey?.toBase58().slice(0, 4)}…` : "Connect Phantom"}
+      {solWallet ? solWallet.address.slice(0, 6) + "..." + solWallet.address.slice(-4) : "Connect Phantom"}
     </button>
-  );
-}
-
-// Exported component you can drop anywhere in your UI
-export default function WalletConnectButton() {
-  const network = WalletAdapterNetwork.Mainnet; // or Devnet/Testnet
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-  const wallets = useMemo(() => [new PhantomWalletAdapter()], []);
-
-  return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <InnerWalletConnectButton />
-      </WalletProvider>
-    </ConnectionProvider>
   );
 }
