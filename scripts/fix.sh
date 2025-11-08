@@ -51,4 +51,3 @@ pnpm add @solana/web3.js @solana/wallet-adapter-react @solana/wallet-adapter-pha
         @privy-io/react-auth @privy-io/server-core bs58 crypto-js
 
 echo "✅ Fixes applied!"
-

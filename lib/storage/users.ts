@@ -17,3 +17,22 @@ export async function getTelegramIdByWallet(wallet: string) {
   const id = await redis.get(KEY_TG_BY_WALLET(wallet));
   return id ? Number(id) : null;
 }
+
+// ✅ Polyfills to match expected API surface
+
+// "User" here = Telegram-linked wallet user record
+export async function getUser(wallet: string) {
+  const tgId = await getTelegramIdByWallet(wallet);
+  if (!tgId) return null;
+
+  return {
+    wallet,
+    telegramId: tgId,
+    encryptedPrivateKey: null  // not implemented yet
+  };
+}
+
+// Placeholder — your app expects this but you store no private key
+export async function getEncryptedPrivateKey(wallet: string) {
+  return null;
+}
