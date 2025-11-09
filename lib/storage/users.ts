@@ -73,37 +73,45 @@ export async function saveEncryptedPrivateKey(identifier: string, encryptedKey: 
 }
 
 export async function generateLinkCode(walletAddress: string): Promise<string> {
+  console.log("[v0] 🎲 Generating 6-digit code...")
+
   // Generate a 6-digit code
   const code = Math.floor(100000 + Math.random() * 900000).toString()
+
+  console.log("[v0] 💾 Storing code in Redis with 10 min expiry...")
 
   // Store the wallet address with the code, expires in 10 minutes
   await redis.set(KEY_LINK_CODE(code), walletAddress)
   await redis.expire(KEY_LINK_CODE(code), 600) // 10 minutes
 
+  console.log("[v0] ✅ Link code stored successfully:", code)
+
   return code
 }
 
 export async function linkTelegramWithCode(telegramId: number, code: string): Promise<boolean> {
+  console.log("[v0] 🔗 Attempting to link Telegram ID:", telegramId, "with code:", code)
+
   const walletAddress = await redis.get<string>(KEY_LINK_CODE(code))
 
   if (!walletAddress) {
-    console.error("[v0] Link code not found or expired:", code)
-    return false // Code expired or invalid
+    console.error("[v0] ❌ Link code not found or expired:", code)
+    return false
   }
 
-  console.log("[v0] Link code valid, wallet:", walletAddress)
+  console.log("[v0] ✅ Link code valid! Wallet:", walletAddress.substring(0, 8) + "...")
 
   // Get existing user by wallet
   let existingUser = await getUser(walletAddress)
 
   if (!existingUser) {
-    console.log("[v0] No existing user, creating new user record for wallet:", walletAddress)
+    console.log("[v0] 📝 Creating new user record for wallet")
     existingUser = {
       walletAddress,
     }
   }
 
-  console.log("[v0] Linking Telegram ID", telegramId, "to wallet", walletAddress)
+  console.log("[v0] 🔗 Connecting wallet to Telegram ID...")
 
   // Link the Telegram ID to the wallet
   await connectWallet(telegramId.toString(), walletAddress, existingUser.encryptedPrivateKey)
@@ -111,7 +119,7 @@ export async function linkTelegramWithCode(telegramId: number, code: string): Pr
   // Delete the used code
   await redis.del(KEY_LINK_CODE(code))
 
-  console.log("[v0] Successfully linked Telegram to wallet")
+  console.log("[v0] ✅ Successfully linked Telegram to wallet!")
   return true
 }
 

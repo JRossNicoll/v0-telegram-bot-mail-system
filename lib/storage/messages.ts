@@ -21,6 +21,8 @@ export async function saveMessage(
   signature?: string,
   isOnchain?: boolean,
 ): Promise<StoredMessage> {
+  console.log("[v0] 💾 saveMessage called with:", typeof fromOrObject === "object" ? "object" : "params")
+
   let from: string
   let actualTo: string
   let actualMessage: string
@@ -42,6 +44,12 @@ export async function saveMessage(
     actualOnChain = isOnchain || false
   }
 
+  console.log("[v0] 📨 Message details:")
+  console.log("[v0] - From:", from.substring(0, 8) + "...")
+  console.log("[v0] - To:", actualTo.substring(0, 8) + "...")
+  console.log("[v0] - On-chain:", actualOnChain)
+  console.log("[v0] - Has signature:", !!actualSignature)
+
   const now = Date.now()
   const id = `msg_${now}_${Math.random().toString(36).slice(2, 8)}`
 
@@ -56,10 +64,13 @@ export async function saveMessage(
     timestamp: now,
   }
 
-  console.log("[v0] Saving message:", obj)
-
+  console.log("[v0] 💾 Pushing message to Redis list...")
   await redis.lpush(KEY_MSGS_FOR_WALLET(actualTo), JSON.stringify(obj))
+
+  console.log("[v0] 📊 Incrementing unread count...")
   await redis.hincrby(KEY_UNREAD_COUNT(actualTo), "count", 1)
+
+  console.log("[v0] ✅ Message saved successfully!")
 
   return obj
 }

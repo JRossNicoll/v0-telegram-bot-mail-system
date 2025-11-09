@@ -1,46 +1,59 @@
 const UPSTASH_URL = process.env.MAIL_KV_REST_API_URL
 const UPSTASH_TOKEN = process.env.MAIL_KV_REST_API_TOKEN
 
+console.log("[v0] ===== REDIS INITIALIZATION =====")
+console.log("[v0] Environment check:")
+console.log("[v0] - MAIL_KV_REST_API_URL exists:", !!process.env.MAIL_KV_REST_API_URL)
+console.log("[v0] - MAIL_KV_REST_API_TOKEN exists:", !!process.env.MAIL_KV_REST_API_TOKEN)
+console.log("[v0] - Final URL set:", !!UPSTASH_URL)
+console.log("[v0] - Final TOKEN set:", !!UPSTASH_TOKEN)
+if (UPSTASH_URL) {
+  console.log("[v0] - URL value:", UPSTASH_URL)
+}
+console.log("[v0] ===================================")
+
 async function upstash(command: string[], cache = "no-store") {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-    console.error("[v0] Redis env check failed:", {
-      hasMailUrl: !!process.env.MAIL_KV_REST_API_URL,
-      hasMailToken: !!process.env.MAIL_KV_REST_API_TOKEN,
-      finalUrl: !!UPSTASH_URL,
-      finalToken: !!UPSTASH_TOKEN,
+    console.error("[v0] ❌ CRITICAL: Redis environment variables not set!")
+    console.error("[v0] Please add these to your Vars:")
+    console.error("[v0] - MAIL_KV_REST_API_URL")
+    console.error("[v0] - MAIL_KV_REST_API_TOKEN")
+    throw new Error("Redis env not set")
+  }
+
+  console.log("[v0] 📡 Redis command:", command[0], "→", command[1] || "")
+
+  try {
+    const res = await fetch(`${UPSTASH_URL}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${UPSTASH_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(command),
+      cache,
+      next: { revalidate: 0 },
     })
-    throw new Error(
-      "Redis environment variables not configured. Please add MAIL_KV_REST_API_URL and MAIL_KV_REST_API_TOKEN to your environment variables.",
-    )
+
+    if (!res.ok) {
+      const text = await res.text()
+      console.error("[v0] ❌ Redis HTTP error:", res.status, text)
+      throw new Error(`Redis HTTP ${res.status}: ${text}`)
+    }
+
+    const data = await res.json()
+
+    if (data.error) {
+      console.error("[v0] ❌ Redis command error:", data.error)
+      throw new Error(data.error)
+    }
+
+    console.log("[v0] ✅ Redis success:", command[0])
+    return data.result
+  } catch (error) {
+    console.error("[v0] ❌ Redis exception:", error)
+    throw error
   }
-
-  console.log("[v0] Redis: executing command:", command[0])
-
-  const res = await fetch(`${UPSTASH_URL}`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${UPSTASH_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(command),
-    cache,
-    next: { revalidate: 0 },
-  })
-
-  if (!res.ok) {
-    console.error("[v0] Redis HTTP error:", res.status, res.statusText)
-    throw new Error(`Redis request failed: ${res.status} ${res.statusText}`)
-  }
-
-  const data = await res.json()
-
-  if (data.error) {
-    console.error("[v0] Redis command error:", data.error)
-    throw new Error(data.error || "Redis error")
-  }
-
-  console.log("[v0] Redis: command successful, result type:", typeof data.result)
-  return data.result
 }
 
 export const redis = {
