@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Lock } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useWallet } from "@solana/wallet-adapter-react"
@@ -10,14 +10,31 @@ import { WalletConnectButton } from "@/components/WalletConnectButton"
 export default function Home() {
   const router = useRouter()
   const { connected, publicKey } = useWallet()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     if (connected && publicKey) {
       const walletAddress = publicKey.toString()
       localStorage.setItem("walletAddress", walletAddress)
       router.push("/inbox")
     }
-  }, [connected, publicKey, router])
+  }, [connected, publicKey, router, mounted])
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-[#FAFAFA] via-[#F5F5F5] to-[#F0F0F0] flex items-center justify-center p-6">
+        <div className="text-center">
+          <div className="inline-block w-8 h-8 border-4 border-[#16CE5E]/20 border-t-[#16CE5E] rounded-full animate-spin" />
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#FAFAFA] via-[#F5F5F5] to-[#F0F0F0] flex items-center justify-center p-6 relative">

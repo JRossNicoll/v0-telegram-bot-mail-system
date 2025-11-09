@@ -38,6 +38,7 @@ interface Message {
 
 export default function InboxPage() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
   const [walletAddress, setWalletAddress] = useState("")
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -56,6 +57,12 @@ export default function InboxPage() {
   const [isTelegramMiniApp, setIsTelegramMiniApp] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
+
     const isTelegram = typeof window !== "undefined" && !!(window as any).Telegram?.WebApp?.initData
     setIsTelegramMiniApp(isTelegram)
 
@@ -99,7 +106,17 @@ export default function InboxPage() {
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [router, connected, publicKey])
+  }, [router, connected, publicKey, mounted])
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-[#FAFBFC] to-[#F5F7F9] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block w-8 h-8 border-4 border-[#16CE5E]/20 border-t-[#16CE5E] rounded-full animate-spin" />
+        </div>
+      </div>
+    )
+  }
 
   const loadMessages = async (address: string) => {
     setLoading(true)
