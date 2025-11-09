@@ -1,18 +1,16 @@
-const UPSTASH_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
-const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
+const UPSTASH_URL = process.env.MAIL_KV_REST_API_URL
+const UPSTASH_TOKEN = process.env.MAIL_KV_REST_API_TOKEN
 
 async function upstash(command: string[], cache = "no-store") {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) {
     console.error("[v0] Redis env check failed:", {
-      hasUpstashUrl: !!process.env.KV_REST_API_URL,
-      hasKvUrl: !!process.env.UPSTASH_REDIS_REST_URL,
-      hasUpstashToken: !!process.env.KV_REST_API_TOKEN,
-      hasKvToken: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+      hasMailUrl: !!process.env.MAIL_KV_REST_API_URL,
+      hasMailToken: !!process.env.MAIL_KV_REST_API_TOKEN,
       finalUrl: !!UPSTASH_URL,
       finalToken: !!UPSTASH_TOKEN,
     })
     throw new Error(
-      "Redis environment variables not configured. Please add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to your environment variables.",
+      "Redis environment variables not configured. Please add MAIL_KV_REST_API_URL and MAIL_KV_REST_API_TOKEN to your environment variables.",
     )
   }
 
