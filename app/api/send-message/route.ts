@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { saveMessage } from "@/lib/storage/messages"
 import { getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
 import { sendOnChainMessage } from "@/lib/solana/transactions"
-import { sendTelegramMessage as sendTelegramMessage } from "@/lib/telegram/api"
+import { sendTelegramMessage } from "@/lib/telegram/api"
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,14 +55,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Save message to storage
-    await saveMessage({
-      from,
-      to,
-      message,
-      onChain: sendOnChain,
-      txSignature,
-    })
+    await saveMessage(from, to, message, txSignature, sendOnChain)
 
     // Notify recipient via Telegram if they have an account
     const recipientTelegramId = await getTelegramIdByWallet(to)

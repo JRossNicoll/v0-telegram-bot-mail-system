@@ -35,13 +35,13 @@ export async function POST(req: Request) {
 
     const result = await sendOnChainMessage(encryptedKey, toWallet, message)
 
-    await saveMessage({
-      from: walletAddress,
-      to: toWallet,
+    await saveMessage(
+      walletAddress,
+      toWallet,
       message,
-      onChain: true,
-      txSignature: result.signature,
-    })
+      result.signature,
+      true, // isOnchain = true
+    )
 
     return NextResponse.json({
       success: true,
