@@ -1,7 +1,7 @@
 import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
-import { SolanaWalletProvider } from "@/components/wallet-provider"
+import { WalletProvider } from "@/components/wallet-provider"
 
 export const metadata: Metadata = {
   title: "Courier Mail",
@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <SolanaWalletProvider>{children}</SolanaWalletProvider>
+        <WalletProvider>{children}</WalletProvider>
       </body>
     </html>
   )
