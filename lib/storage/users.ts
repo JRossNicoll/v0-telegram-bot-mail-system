@@ -87,16 +87,23 @@ export async function linkTelegramWithCode(telegramId: number, code: string): Pr
   const walletAddress = await redis.get<string>(KEY_LINK_CODE(code))
 
   if (!walletAddress) {
+    console.error("[v0] Link code not found or expired:", code)
     return false // Code expired or invalid
   }
 
+  console.log("[v0] Link code valid, wallet:", walletAddress)
+
   // Get existing user by wallet
-  const existingUser = await getUser(walletAddress)
+  let existingUser = await getUser(walletAddress)
 
   if (!existingUser) {
-    console.error("[v0] No user found for wallet:", walletAddress)
-    return false
+    console.log("[v0] No existing user, creating new user record for wallet:", walletAddress)
+    existingUser = {
+      walletAddress,
+    }
   }
+
+  console.log("[v0] Linking Telegram ID", telegramId, "to wallet", walletAddress)
 
   // Link the Telegram ID to the wallet
   await connectWallet(telegramId.toString(), walletAddress, existingUser.encryptedPrivateKey)
@@ -104,6 +111,7 @@ export async function linkTelegramWithCode(telegramId: number, code: string): Pr
   // Delete the used code
   await redis.del(KEY_LINK_CODE(code))
 
+  console.log("[v0] Successfully linked Telegram to wallet")
   return true
 }
 

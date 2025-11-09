@@ -762,12 +762,6 @@ export async function POST(request: NextRequest) {
             inline_keyboard: [
               [
                 {
-                  text: "🧪 TEST BUTTON (Click Me!)",
-                  callback_data: "test_callback",
-                },
-              ],
-              [
-                {
                   text: "🚀 Get Started",
                   callback_data: "connect_wallet",
                 },
