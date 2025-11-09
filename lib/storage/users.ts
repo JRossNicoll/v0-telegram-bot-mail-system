@@ -1,67 +1,105 @@
 import { redis } from "@/lib/redis"
 
-const KEY_WALLET_BY_TG = (tgId: number) => `tg:${tgId}:wallet`
+// Keys for different access patterns
+const KEY_USER_BY_TG = (tgId: string) => `user:telegram:${tgId}`
+const KEY_USER_BY_WALLET = (wallet: string) => `user:wallet:${wallet}`
 const KEY_TG_BY_WALLET = (wallet: string) => `wallet:${wallet}:tg`
-const KEY_USER = (wallet: string) => `user:${wallet}`
 const KEY_LINK_CODE = (code: string) => `link:code:${code}`
 
-export async function connectWallet(tgId: number, wallet: string) {
-  await redis.set(KEY_WALLET_BY_TG(tgId), wallet)
-  await redis.set(KEY_TG_BY_WALLET(wallet), String(tgId))
-  await redis.hset(KEY_USER(wallet), { wallet })
+export interface User {
+  telegramId?: string
+  walletAddress: string
+  encryptedPrivateKey?: string
 }
 
-export async function getWalletByTelegramId(tgId: number) {
-  const w = await redis.get(KEY_WALLET_BY_TG(tgId))
-  return w ?? null
+export async function connectWallet(telegramId: string, walletAddress: string, encryptedKey?: string) {
+  const user: User = {
+    telegramId,
+    walletAddress,
+    ...(encryptedKey && { encryptedPrivateKey: encryptedKey }),
+  }
+
+  // Store user data accessible by both Telegram ID and wallet address
+  await redis.set(KEY_USER_BY_TG(telegramId), JSON.stringify(user))
+  await redis.set(KEY_USER_BY_WALLET(walletAddress), JSON.stringify(user))
+  await redis.set(KEY_TG_BY_WALLET(walletAddress), telegramId)
 }
 
-export async function getTelegramIdByWallet(wallet: string) {
-  const id = await redis.get(KEY_TG_BY_WALLET(wallet))
-  return id ? Number(id) : null
-}
+export async function getUser(identifier: string): Promise<User | null> {
+  // Try to get user by Telegram ID first
+  let userData = await redis.get<string>(KEY_USER_BY_TG(identifier))
 
-// ✅ required by app — returns user object shape
-export async function getUser(wallet: string) {
-  const data = await redis.hgetall(KEY_USER(wallet))
-  if (!data || !data.wallet) return null
+  // If not found, try by wallet address
+  if (!userData) {
+    userData = await redis.get<string>(KEY_USER_BY_WALLET(identifier))
+  }
 
-  return {
-    wallet: data.wallet,
-    telegramId: data.telegramId ? Number(data.telegramId) : null,
+  if (!userData) return null
+
+  try {
+    return JSON.parse(userData) as User
+  } catch (error) {
+    console.error("[v0] Failed to parse user data:", error)
+    return null
   }
 }
 
-// ✅ compatibility stub — we decrypt later once system is stable
-export async function getEncryptedPrivateKey(wallet: string) {
-  const key = await redis.hget(KEY_USER(wallet), "encryptedPrivateKey")
-  return key ?? null
+export async function getWalletByTelegramId(telegramId: string): Promise<string | null> {
+  const user = await getUser(telegramId)
+  return user?.walletAddress || null
 }
 
-export async function saveEncryptedPrivateKey(wallet: string, encrypted: string) {
-  await redis.hset(KEY_USER(wallet), { encryptedPrivateKey: encrypted })
+export async function getTelegramIdByWallet(walletAddress: string): Promise<string | null> {
+  const tgId = await redis.get<string>(KEY_TG_BY_WALLET(walletAddress))
+  return tgId || null
 }
 
-export async function generateLinkCode(wallet: string): Promise<string> {
+export async function getEncryptedPrivateKey(identifier: string): Promise<string | null> {
+  const user = await getUser(identifier)
+  return user?.encryptedPrivateKey || null
+}
+
+export async function saveEncryptedPrivateKey(identifier: string, encryptedKey: string) {
+  const user = await getUser(identifier)
+  if (!user) return
+
+  user.encryptedPrivateKey = encryptedKey
+
+  // Update both storage locations
+  if (user.telegramId) {
+    await redis.set(KEY_USER_BY_TG(user.telegramId), JSON.stringify(user))
+  }
+  await redis.set(KEY_USER_BY_WALLET(user.walletAddress), JSON.stringify(user))
+}
+
+export async function generateLinkCode(walletAddress: string): Promise<string> {
   // Generate a 6-digit code
   const code = Math.floor(100000 + Math.random() * 900000).toString()
 
   // Store the wallet address with the code, expires in 10 minutes
-  await redis.set(KEY_LINK_CODE(code), wallet)
+  await redis.set(KEY_LINK_CODE(code), walletAddress)
   await redis.expire(KEY_LINK_CODE(code), 600) // 10 minutes
 
   return code
 }
 
-export async function linkTelegramWithCode(tgId: number, code: string): Promise<boolean> {
-  const wallet = await redis.get(KEY_LINK_CODE(code))
+export async function linkTelegramWithCode(telegramId: number, code: string): Promise<boolean> {
+  const walletAddress = await redis.get<string>(KEY_LINK_CODE(code))
 
-  if (!wallet) {
+  if (!walletAddress) {
     return false // Code expired or invalid
   }
 
-  // Link the wallet to Telegram ID
-  await connectWallet(tgId, wallet)
+  // Get existing user by wallet
+  const existingUser = await getUser(walletAddress)
+
+  if (!existingUser) {
+    console.error("[v0] No user found for wallet:", walletAddress)
+    return false
+  }
+
+  // Link the Telegram ID to the wallet
+  await connectWallet(telegramId.toString(), walletAddress, existingUser.encryptedPrivateKey)
 
   // Delete the used code
   await redis.del(KEY_LINK_CODE(code))
@@ -69,7 +107,7 @@ export async function linkTelegramWithCode(tgId: number, code: string): Promise<
   return true
 }
 
-export async function isWalletLinked(wallet: string): Promise<boolean> {
-  const tgId = await getTelegramIdByWallet(wallet)
+export async function isWalletLinked(walletAddress: string): Promise<boolean> {
+  const tgId = await getTelegramIdByWallet(walletAddress)
   return tgId !== null
 }
