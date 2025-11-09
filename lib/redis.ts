@@ -33,8 +33,9 @@ async function upstash(command: string[], cache = "no-store") {
 
 export const redis = {
   // Strings
-  async get(key: string) {
-    return upstash(["GET", key])
+  async get<T = string>(key: string): Promise<T | null> {
+    const result = await upstash(["GET", key])
+    return result as T | null
   },
   async set(key: string, val: string) {
     return upstash(["SET", key, val])
@@ -46,14 +47,15 @@ export const redis = {
   async lpush(key: string, val: string) {
     return upstash(["LPUSH", key, val])
   },
-  async lrange(key: string, start = 0, stop = -1) {
-    return upstash(["LRANGE", key, String(start), String(stop)])
+  async lrange(key: string, start = 0, stop = -1): Promise<string[]> {
+    const result = await upstash(["LRANGE", key, String(start), String(stop)])
+    return Array.isArray(result) ? result : []
   },
   // Hashes
   async hincrby(key: string, field: string, by: number) {
     return upstash(["HINCRBY", key, field, String(by)])
   },
-  async hget(key: string, field: string) {
+  async hget(key: string, field: string): Promise<string | null> {
     return upstash(["HGET", key, field])
   },
   async hgetall(key: string) {

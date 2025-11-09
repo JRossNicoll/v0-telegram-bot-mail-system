@@ -48,17 +48,17 @@ export async function POST(request: NextRequest) {
         console.log("[v0] User ID from callback:", userId)
         console.log("[v0] User ID type:", typeof userId)
 
-        const miniAppUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://your-app.vercel.app"}/?userId=${userId}&telegram=true`
+        const miniAppUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://your-app.vercel.app"}/miniapp`
         console.log("[v0] Mini app URL:", miniAppUrl)
 
         await sendTelegramMessage(
           chatId,
           "✨ <b>Connect Your Wallet</b>\n\n" +
-            "Open the Courier app to connect your wallet:\n\n" +
+            "Open the Courier app to connect your wallet and link to Telegram:\n\n" +
             "  • Connect Phantom, Solflare, or Backpack wallet\n" +
-            "  • Access your encrypted inbox\n" +
-            "  • Send on-chain and off-chain messages\n\n" +
-            "Or use /connect command with your wallet address for quick setup.",
+            "  • Generate a link code\n" +
+            "  • Send /link <code> to complete setup\n\n" +
+            "After linking, you can use both web and Telegram bot!",
           {
             reply_markup: {
               inline_keyboard: [
