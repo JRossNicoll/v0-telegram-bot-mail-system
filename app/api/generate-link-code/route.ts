@@ -9,7 +9,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing wallet address" }, { status: 400 })
     }
 
+    console.log("[v0] Generating link code for wallet:", wallet)
+
     const code = await generateLinkCode(wallet)
+
+    console.log("[v0] Successfully generated link code:", code)
 
     return NextResponse.json({ success: true, code })
   } catch (error: any) {

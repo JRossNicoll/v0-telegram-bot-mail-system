@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const cookieStore = await cookies()
     const walletAddress = cookieStore.get("courier_wallet")?.value
 
-    console.log("[v0] send-onchain: wallet address:", walletAddress)
+    console.log("[v0] send-onchain: wallet address from cookie:", walletAddress)
 
     if (!isValidSolanaAddress(walletAddress)) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
@@ -21,14 +21,14 @@ export async function POST(req: Request) {
 
     const { toWallet, message } = await req.json()
 
-    console.log("[v0] send-onchain: toWallet:", toWallet, "message:", message)
+    console.log("[v0] send-onchain: toWallet:", toWallet, "message length:", message?.length)
 
     if (!isValidSolanaAddress(toWallet) || typeof message !== "string" || message.trim().length === 0) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
     }
 
     const telegramId = await getTelegramIdByWallet(walletAddress)
-    console.log("[v0] send-onchain: telegramId:", telegramId)
+    console.log("[v0] send-onchain: sender telegramId:", telegramId)
 
     if (!telegramId) {
       return NextResponse.json({ error: "Wallet not linked to Telegram" }, { status: 403 })
@@ -41,21 +41,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No custodial key available" }, { status: 400 })
     }
 
+    console.log("[v0] send-onchain: calling sendOnChainMessage...")
     const result = await sendOnChainMessage(encryptedKey, toWallet, message)
-    console.log("[v0] send-onchain: transaction result:", result.signature)
+    console.log("[v0] send-onchain: transaction successful:", result.signature)
 
     try {
-      await saveMessage(
-        walletAddress,
-        toWallet,
-        message,
-        result.signature,
-        true, // isOnchain = true
-      )
+      console.log("[v0] send-onchain: saving message to Redis...")
+      await saveMessage(walletAddress, toWallet, message, result.signature, true)
       console.log("[v0] send-onchain: message saved successfully")
-    } catch (saveError) {
-      console.error("[v0] send-onchain: failed to save message:", saveError)
+    } catch (saveError: any) {
+      console.error("[v0] send-onchain: failed to save message to Redis:", saveError)
       // Continue anyway - the transaction succeeded on-chain
+      return NextResponse.json({
+        success: true,
+        signature: result.signature,
+        explorerUrl: result.explorerUrl,
+        warning: "Transaction successful but failed to save to inbox",
+      })
     }
 
     return NextResponse.json({

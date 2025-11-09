@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   try {
     const { from, to, message, onChain } = await request.json()
 
-    console.log("[v0] Send message request:", { from, to, onChain })
+    console.log("[v0] Send message request:", { from, to, onChain, messageLength: message?.length })
 
     if (!from || !to || !message) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
@@ -24,8 +24,11 @@ export async function POST(request: NextRequest) {
     let txSignature: string | undefined
 
     if (sendOnChain) {
+      console.log("[v0] Processing on-chain message...")
       // Send on-chain message
       const senderTelegramId = await getTelegramIdByWallet(from)
+      console.log("[v0] Sender Telegram ID:", senderTelegramId)
+
       if (!senderTelegramId) {
         return NextResponse.json(
           { success: false, error: "Wallet not linked to Telegram. Use the Telegram bot to connect." },
@@ -34,6 +37,7 @@ export async function POST(request: NextRequest) {
       }
 
       const encryptedKey = await getEncryptedPrivateKey(senderTelegramId)
+      console.log("[v0] Encrypted key exists:", !!encryptedKey)
 
       if (!encryptedKey) {
         return NextResponse.json(
@@ -43,9 +47,10 @@ export async function POST(request: NextRequest) {
       }
 
       try {
+        console.log("[v0] Calling sendOnChainMessage...")
         const result = await sendOnChainMessage(encryptedKey, to, message)
         txSignature = result.signature
-        console.log("[v0] On-chain message sent:", txSignature)
+        console.log("[v0] On-chain message sent successfully:", txSignature)
       } catch (error: any) {
         console.error("[v0] On-chain send error:", error)
         return NextResponse.json(
@@ -55,7 +60,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await saveMessage(from, to, message, txSignature, sendOnChain)
+    try {
+      console.log("[v0] Saving message to Redis...")
+      await saveMessage(from, to, message, txSignature, sendOnChain)
+      console.log("[v0] Message saved successfully")
+    } catch (error: any) {
+      console.error("[v0] Failed to save message to Redis:", error)
+      return NextResponse.json({ success: false, error: `Redis error: ${error.message}` }, { status: 500 })
+    }
 
     // Notify recipient via Telegram if they have an account
     const recipientTelegramId = await getTelegramIdByWallet(to)

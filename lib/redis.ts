@@ -1,14 +1,22 @@
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
+const UPSTASH_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL
+const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN
 
 async function upstash(command: string[], cache = "no-store") {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) {
     console.error("[v0] Redis env check failed:", {
-      hasUrl: !!UPSTASH_URL,
-      hasToken: !!UPSTASH_TOKEN,
+      hasUpstashUrl: !!process.env.KV_REST_API_URL,
+      hasKvUrl: !!process.env.UPSTASH_REDIS_REST_URL,
+      hasUpstashToken: !!process.env.KV_REST_API_TOKEN,
+      hasKvToken: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+      finalUrl: !!UPSTASH_URL,
+      finalToken: !!UPSTASH_TOKEN,
     })
-    throw new Error("Redis env not set")
+    throw new Error(
+      "Redis environment variables not configured. Please add UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN to your environment variables.",
+    )
   }
+
+  console.log("[v0] Redis: executing command:", command[0])
 
   const res = await fetch(`${UPSTASH_URL}`, {
     method: "POST",
@@ -21,6 +29,11 @@ async function upstash(command: string[], cache = "no-store") {
     next: { revalidate: 0 },
   })
 
+  if (!res.ok) {
+    console.error("[v0] Redis HTTP error:", res.status, res.statusText)
+    throw new Error(`Redis request failed: ${res.status} ${res.statusText}`)
+  }
+
   const data = await res.json()
 
   if (data.error) {
@@ -28,6 +41,7 @@ async function upstash(command: string[], cache = "no-store") {
     throw new Error(data.error || "Redis error")
   }
 
+  console.log("[v0] Redis: command successful, result type:", typeof data.result)
   return data.result
 }
 

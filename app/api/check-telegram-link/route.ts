@@ -9,12 +9,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing wallet address" }, { status: 400 })
     }
 
+    console.log("[v0] Checking telegram link for wallet:", wallet)
+
     const isLinked = await isWalletLinked(wallet)
     const telegramId = isLinked ? await getTelegramIdByWallet(wallet) : null
 
+    console.log("[v0] Telegram link status:", { isLinked, telegramId })
+
     return NextResponse.json({
       success: true,
-      linked: isLinked,
+      isLinked,
       telegramId,
     })
   } catch (error: any) {
@@ -31,12 +35,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing wallet address" }, { status: 400 })
     }
 
+    console.log("[v0] Checking telegram link for wallet (POST):", walletAddress)
+
     const isLinked = await isWalletLinked(walletAddress)
     const telegramId = isLinked ? await getTelegramIdByWallet(walletAddress) : null
 
+    console.log("[v0] Telegram link status (POST):", { isLinked, telegramId })
+
     return NextResponse.json({
       success: true,
-      linked: isLinked,
+      isLinked,
       telegramId,
     })
   } catch (error: any) {
