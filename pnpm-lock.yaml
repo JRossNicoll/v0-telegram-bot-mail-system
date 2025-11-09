@@ -18,7 +18,7 @@ importers:
         specifier: 6.19.0
         version: 6.19.0(prisma@6.19.0(typescript@5.0.2))(typescript@5.0.2)
       '@privy-io/react-auth':
-        specifier: latest
+        specifier: 3.6.1
         version: 3.6.1(dc8995da69158c51f4e99ec4192a964f)
       '@radix-ui/react-accordion':
         specifier: 1.2.2
@@ -8715,7 +8715,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.1
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
@@ -11720,6 +11720,11 @@ snapshots:
       typescript: 5.0.2
       zod: 3.25.76
 
+  abitype@1.1.1(typescript@5.0.2)(zod@3.22.4):
+    optionalDependencies:
+      typescript: 5.0.2
+      zod: 3.22.4
+
   abitype@1.1.1(typescript@5.0.2)(zod@3.25.76):
     optionalDependencies:
       typescript: 5.0.2
@@ -13644,7 +13649,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.1.0(typescript@5.0.2)(zod@3.22.4)
+      abitype: 1.1.1(typescript@5.0.2)(zod@3.22.4)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.0.2
@@ -13659,7 +13664,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.1.0(typescript@5.0.2)(zod@3.25.76)
+      abitype: 1.1.1(typescript@5.0.2)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.0.2

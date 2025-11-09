@@ -23,7 +23,7 @@ import {
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { usePrivy } from "@privy-io/react-auth"
+import { useWallet } from "@solana/wallet-adapter-react"
 import { WalletConnectButton } from "@/components/wallet-button"
 
 interface Message {
@@ -53,29 +53,23 @@ export default function InboxPage() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [showMobileSidebar, setShowMobileSidebar] = useState(false)
   const [walletSource, setWalletSource] = useState<"external" | "custodial">("custodial")
-  const { ready, authenticated, user } = usePrivy()
+  const { connected, publicKey } = useWallet()
   const [isTelegramMiniApp, setIsTelegramMiniApp] = useState(false)
 
   useEffect(() => {
     const isTelegram = typeof window !== "undefined" && !!(window as any).Telegram?.WebApp?.initData
     setIsTelegramMiniApp(isTelegram)
 
-    if (ready && authenticated && user) {
-      const solanaWallet = user.linkedAccounts.find(
-        (account) => account.type === "wallet" && account.chainType === "solana",
-      )
-
-      if (solanaWallet && "address" in solanaWallet) {
-        const connectedAddress = solanaWallet.address
-        console.log("[v0] Privy wallet authenticated:", connectedAddress)
-        setWalletAddress(connectedAddress)
-        setIsAuthenticated(true)
-        setWalletSource("external")
-        localStorage.setItem("walletAddress", connectedAddress)
-        localStorage.setItem("walletSource", "external")
-        loadMessages(connectedAddress)
-        return
-      }
+    if (connected && publicKey) {
+      const connectedAddress = publicKey.toString()
+      console.log("[v0] Solana wallet authenticated:", connectedAddress)
+      setWalletAddress(connectedAddress)
+      setIsAuthenticated(true)
+      setWalletSource("external")
+      localStorage.setItem("walletAddress", connectedAddress)
+      localStorage.setItem("walletSource", "external")
+      loadMessages(connectedAddress)
+      return
     }
 
     // Fallback to localStorage
@@ -89,7 +83,7 @@ export default function InboxPage() {
       setNotificationsEnabled(notifStatus)
       setWalletSource(savedSource === "external" ? "external" : "custodial")
       loadMessages(savedWallet)
-    } else if (ready && !authenticated) {
+    } else if (!connected) {
       router.push("/")
     }
 
@@ -106,7 +100,7 @@ export default function InboxPage() {
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [router, ready, authenticated, user])
+  }, [router, connected, publicKey])
 
   const loadMessages = async (address: string) => {
     setLoading(true)

@@ -4,29 +4,21 @@ import { useEffect } from "react"
 import Image from "next/image"
 import { Lock } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { usePrivy } from "@privy-io/react-auth"
+import { useWallet } from "@solana/wallet-adapter-react"
 
 import { WalletConnectButton } from "@/components/WalletConnectButton"
 
 export default function Home() {
   const router = useRouter()
-  const { ready, authenticated, user } = usePrivy()
+  const { connected, publicKey } = useWallet()
 
   useEffect(() => {
-    if (!ready || !authenticated || !user) {
-      return
-    }
-
-    const solanaWallet = user.linkedAccounts.find(
-      (account) => account.type === "wallet" && account.chainType === "solana",
-    )
-
-    if (solanaWallet && "address" in solanaWallet) {
-      const walletAddress = solanaWallet.address
+    if (connected && publicKey) {
+      const walletAddress = publicKey.toString()
       localStorage.setItem("walletAddress", walletAddress)
       router.push("/inbox")
     }
-  }, [ready, authenticated, user, router])
+  }, [connected, publicKey, router])
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center p-6 relative">
@@ -69,7 +61,7 @@ export default function Home() {
             <div className="pt-4 border-t border-black/[0.06]">
               <div className="flex items-center justify-center gap-2 text-xs text-[#000000]/40 font-medium">
                 <Lock className="w-3.5 h-3.5" />
-                <span>Secure connection via Privy</span>
+                <span>Secure connection via Solana</span>
               </div>
             </div>
           </div>
