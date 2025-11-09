@@ -1,8 +1,15 @@
-const UPSTASH_URL = process.env.KV_REST_API_URL!
-const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN!
+const UPSTASH_URL = process.env.KV_REST_API_URL
+const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN
 
 async function upstash(command: string[], cache = "no-store") {
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) throw new Error("Redis env not set")
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) {
+    console.error("[v0] Redis env check failed:", {
+      hasUrl: !!UPSTASH_URL,
+      hasToken: !!UPSTASH_TOKEN,
+    })
+    throw new Error("Redis env not set")
+  }
+
   const res = await fetch(`${UPSTASH_URL}`, {
     method: "POST",
     headers: {
@@ -13,10 +20,14 @@ async function upstash(command: string[], cache = "no-store") {
     cache,
     next: { revalidate: 0 },
   })
+
   const data = await res.json()
+
   if (data.error) {
+    console.error("[v0] Redis command error:", data.error)
     throw new Error(data.error || "Redis error")
   }
+
   return data.result
 }
 
