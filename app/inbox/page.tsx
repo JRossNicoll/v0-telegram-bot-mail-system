@@ -473,7 +473,7 @@ export default function InboxPage() {
                   className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors"
                 >
                   <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png"
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-0iWevp0tLXfJLfE4K0j2w597j1PN2r.jpg"
                     alt="User"
                     className="w-7 h-7 rounded-lg flex-shrink-0"
                   />
@@ -882,7 +882,7 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
           ) : (
             <div className="relative w-10 h-10 flex-shrink-0">
               <img
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png"
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-0iWevp0tLXfJLfE4K0j2w597j1PN2r.jpg"
                 alt="User"
                 className="w-10 h-10 rounded-xl"
               />

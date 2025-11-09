@@ -8,9 +8,8 @@ export const metadata: Metadata = {
   description: "Wallet ↔ Telegram mail system",
   generator: "v0.app",
   icons: {
-    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-G6LT1sSkIQ4qz5WRjEGdF0FvYOYuHy.jpg",
-    apple:
-      "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-G6LT1sSkIQ4qz5WRjEGdF0FvYOYuHy.jpg",
+    icon: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png",
+    apple: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png",
   },
 }
 
