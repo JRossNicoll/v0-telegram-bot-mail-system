@@ -19,6 +19,8 @@ import {
   Lock,
   X,
   Edit3,
+  Package,
+  User,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -327,7 +329,9 @@ export default function InboxPage() {
       <aside className="md:hidden fixed left-0 top-0 bottom-0 w-16 bg-[#0A0A0A] border-r border-[#16CE5E]/10 flex flex-col items-center py-6 space-y-6 z-30">
         <Link href="/" className="relative group">
           <div className="absolute inset-0 bg-[#16CE5E] opacity-0 group-hover:opacity-10 blur-xl transition-opacity rounded-xl" />
-          <Image src="/logo.png" alt="COURIER" width={40} height={40} className="relative z-10 rounded-xl" />
+          <div className="relative z-10 w-10 h-10 rounded-xl bg-[#16CE5E]/20 flex items-center justify-center">
+            <Package className="w-6 h-6 text-[#16CE5E]" />
+          </div>
         </Link>
 
         <nav className="flex-1 flex flex-col space-y-4">
@@ -374,7 +378,9 @@ export default function InboxPage() {
       <aside className="hidden md:flex w-24 bg-[#0A0A0A] border-r border-[#16CE5E]/10 flex-col items-center py-6 space-y-8">
         <Link href="/" className="relative group">
           <div className="absolute inset-0 bg-[#16CE5E] opacity-0 group-hover:opacity-10 blur-xl transition-opacity rounded-xl" />
-          <Image src="/logo.png" alt="COURIER" width={48} height={48} className="relative z-10 rounded-xl" />
+          <div className="relative z-10 w-12 h-12 rounded-xl bg-[#16CE5E]/20 flex items-center justify-center">
+            <Package className="w-7 h-7 text-[#16CE5E]" />
+          </div>
         </Link>
 
         <nav className="flex-1 flex flex-col space-y-4">
@@ -450,7 +456,9 @@ export default function InboxPage() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              <WalletConnectButton />
+              <div className="hidden sm:block">
+                <WalletConnectButton />
+              </div>
 
               <Button
                 variant="ghost"
@@ -471,14 +479,8 @@ export default function InboxPage() {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-lg overflow-hidden flex-shrink-0">
-                    <Image
-                      src="/user-avatar.png"
-                      alt="User"
-                      width={28}
-                      height={28}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-7 h-7 rounded-lg bg-[#16CE5E]/20 flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-[#16CE5E]" />
                   </div>
                   <span className="text-sm font-mono text-[#000000]/70 hidden sm:inline tracking-tight">
                     {formatAddress(walletAddress)}
