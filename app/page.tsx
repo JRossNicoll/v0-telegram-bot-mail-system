@@ -35,13 +35,13 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="relative z-10 w-full max-w-[420px]">
+      <div className="relative z-10 w-full max-w-[400px]">
         <div className="relative">
           {/* Radial highlight behind card for premium depth */}
           <div className="absolute inset-0 bg-gradient-radial from-white/60 via-transparent to-transparent blur-2xl scale-105 -z-10" />
 
-          <div className="glass-card rounded-[22px] p-10 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border border-white/60 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] transition-all duration-500">
-            <div className="flex justify-center mb-6">
+          <div className="glass-card rounded-[22px] p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border border-white/60 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] transition-all duration-500">
+            <div className="flex justify-center mb-4">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-[18px] blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <img
@@ -52,23 +52,23 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="text-center mb-9 space-y-1.5">
+            <div className="text-center mb-5 space-y-0.5">
               <h1 className="text-[32px] font-semibold text-[#000000] tracking-[-0.02em] leading-tight">Courier</h1>
               <p className="text-[13px] text-[#000000]/45 font-medium tracking-tight">Private. Fast. Encrypted.</p>
             </div>
 
-            <div className="space-y-6">
-              <div className="text-center space-y-4">
+            <div className="space-y-4">
+              <div className="text-center space-y-3">
                 <p className="text-[13px] text-[#000000]/60 font-medium tracking-tight">
                   Connect your Phantom wallet to continue
                 </p>
               </div>
 
-              <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex flex-col items-center justify-center gap-3">
                 <WalletConnectButton />
               </div>
 
-              <div className="pt-5 border-t border-black/[0.04]">
+              <div className="pt-3 border-t border-black/[0.04]">
                 <div className="flex items-center justify-center gap-2 text-[11px] text-[#000000]/35 font-medium tracking-wide">
                   <Lock className="w-3 h-3 stroke-[1.5]" />
                   <span>Secure Connection via Phantom</span>
@@ -78,7 +78,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center items-center gap-3">
+        <div className="mt-6 flex justify-center items-center gap-3">
           <a
             href="https://twitter.com"
             target="_blank"
