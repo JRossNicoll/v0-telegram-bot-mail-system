@@ -324,14 +324,14 @@ export default function InboxPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-[#FAFBFC] to-[#F5F7F9] flex">
       <aside className="md:hidden fixed left-0 top-0 bottom-0 w-20 glass-panel flex flex-col items-center py-8 space-y-8 z-30 border-r border-white/40">
         <Link href="/" className="relative group">
-          <div className="absolute inset-0 bg-[#64C8B4] opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500 rounded-2xl" />
+          <div className="absolute inset-0 bg-[#16CE5E] opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500 rounded-2xl" />
           <div className="relative z-10 w-12 h-12 rounded-[18px] glass-card flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-            <Package className="w-7 h-7 text-[#64C8B4]" />
+            <Package className="w-7 h-7 text-[#16CE5E]" />
           </div>
         </Link>
 
         <nav className="flex-1 flex flex-col space-y-5">
-          <button className="relative w-12 h-12 rounded-[18px] glass-card flex items-center justify-center text-[#64C8B4] mint-glow">
+          <button className="relative w-12 h-12 rounded-[18px] glass-card flex items-center justify-center text-[#16CE5E] mint-glow">
             <Mail className="w-5 h-5" />
             {unreadCount > 0 && (
               <span className="absolute -top-1.5 -right-1.5 bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
@@ -372,14 +372,14 @@ export default function InboxPage() {
 
       <aside className="hidden md:flex w-28 glass-panel border-r border-white/40 flex-col items-center py-10 space-y-10">
         <Link href="/" className="relative group">
-          <div className="absolute inset-0 bg-[#64C8B4] opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500 rounded-2xl" />
+          <div className="absolute inset-0 bg-[#16CE5E] opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500 rounded-2xl" />
           <div className="relative z-10 w-14 h-14 rounded-[20px] glass-card flex items-center justify-center group-hover:scale-105 transition-all duration-300">
-            <Package className="w-8 h-8 text-[#64C8B4]" />
+            <Package className="w-8 h-8 text-[#16CE5E]" />
           </div>
         </Link>
 
         <nav className="flex-1 flex flex-col space-y-6">
-          <button className="relative w-14 h-14 rounded-[20px] glass-card flex items-center justify-center text-[#64C8B4] mint-glow hover:scale-105 transition-all duration-300 group">
+          <button className="relative w-14 h-14 rounded-[20px] glass-card flex items-center justify-center text-[#16CE5E] mint-glow hover:scale-105 transition-all duration-300 group">
             <Mail className="w-6 h-6" />
             <span className="absolute left-20 glass-card text-gray-900 text-sm font-semibold px-4 py-2 rounded-[14px] opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap shadow-lg">
               Inbox
@@ -438,10 +438,10 @@ export default function InboxPage() {
         <header className="glass-panel border-b border-white/40 float-shadow">
           <div className="px-6 md:px-10 h-20 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Courier</h1>
+              <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Courier</h1>
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
-                <Lock className="w-3.5 h-3.5 text-[#64C8B4]" />
-                <span className="text-xs font-semibold text-[#64C8B4] tracking-tight">Encrypted</span>
+                <Lock className="w-3.5 h-3.5 text-[#16CE5E]" />
+                <span className="text-xs font-semibold text-[#16CE5E] tracking-tight">Encrypted</span>
               </div>
               {unreadCount > 0 && (
                 <Badge className="bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-6 px-3 text-xs font-bold rounded-full shadow-lg">
@@ -489,7 +489,7 @@ export default function InboxPage() {
                       </p>
                       <p className="text-sm font-mono text-gray-900 truncate tracking-tight">{walletAddress}</p>
                       {isTelegramMiniApp && (
-                        <p className="text-[11px] text-[#64C8B4] font-semibold mt-2">📱 Telegram Mini App</p>
+                        <p className="text-[11px] text-[#16CE5E] font-semibold mt-2">📱 Telegram Mini App</p>
                       )}
                     </div>
                     <button
@@ -520,9 +520,9 @@ export default function InboxPage() {
                   onClick={() => setShowSendModal(true)}
                   className="group flex items-center gap-3 h-11 px-5 hover:bg-white/60 rounded-[16px] transition-all duration-300 glass-hover"
                 >
-                  <div className="relative w-9 h-9 rounded-[14px] bg-gradient-to-br from-[#64C8B4]/10 via-white/50 to-[#64C8B4]/5 flex items-center justify-center flex-shrink-0">
+                  <div className="relative w-9 h-9 rounded-[14px] bg-gradient-to-br from-[#16CE5E]/10 via-white/50 to-[#16CE5E]/5 flex items-center justify-center flex-shrink-0">
                     <div className="absolute inset-[1px] rounded-[13px] bg-gradient-to-br from-white/90 to-white/50" />
-                    <Edit3 className="relative w-4 h-4 text-[#64C8B4]" />
+                    <Edit3 className="relative w-4 h-4 text-[#16CE5E]" />
                   </div>
                   <span className="text-[15px] font-semibold text-gray-900 tracking-tight">Compose</span>
                 </button>
@@ -550,7 +550,7 @@ export default function InboxPage() {
                   <TabsList className="bg-transparent h-11 gap-2">
                     <TabsTrigger
                       value="all"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#64C8B4] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       All
                       {unreadMessages.length > 0 ? (
@@ -558,14 +558,14 @@ export default function InboxPage() {
                           {unreadMessages.length}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#64C8B4]/15 text-[#64C8B4] hover:bg-[#64C8B4]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
                           {messages.length}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="onchain"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#64C8B4] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       <span className="hidden sm:inline">On-Chain</span>
                       <span className="sm:hidden">On</span>
@@ -574,14 +574,14 @@ export default function InboxPage() {
                           {unreadOnChain}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#64C8B4]/15 text-[#64C8B4] hover:bg-[#64C8B4]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
                           {onChainMessages.length}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="offchain"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#64C8B4] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       <span className="hidden sm:inline">Off-Chain</span>
                       <span className="sm:hidden">Off</span>
@@ -590,7 +590,7 @@ export default function InboxPage() {
                           {unreadOffChain}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#64C8B4]/15 text-[#64C8B4] hover:bg-[#64C8B4]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
                           {offChainMessages.length}
                         </Badge>
                       )}
@@ -601,7 +601,7 @@ export default function InboxPage() {
                 <TabsContent value="all" className="mt-0">
                   {loading ? (
                     <div className="flex justify-center py-16">
-                      <Loader2 className="h-6 w-6 animate-spin text-[#64C8B4]" />
+                      <Loader2 className="h-6 w-6 animate-spin text-[#16CE5E]" />
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-200/50">
@@ -654,17 +654,17 @@ export default function InboxPage() {
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-6 text-xs font-medium tracking-tight md:mx-auto">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#64C8B4] shadow-sm" />
+                <div className="w-2 h-2 rounded-full bg-[#16CE5E] shadow-sm" />
                 <span className="text-gray-600">Secure</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#64C8B4] shadow-sm" />
+                <div className="w-2 h-2 rounded-full bg-[#16CE5E] shadow-sm" />
                 <span className="text-gray-600">Encrypted</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#64C8B4] shadow-sm" />
+                <div className="w-2 h-2 rounded-full bg-[#16CE5E] shadow-sm" />
                 <span className="text-gray-600">Online</span>
               </div>
             </div>
@@ -722,11 +722,11 @@ export default function InboxPage() {
 
                   <button
                     onClick={() => setSendType("onchain")}
-                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#64C8B4] hover:bg-[#64C8B4]/5 transition-all duration-300 text-left glass-hover"
+                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 bg-[#64C8B4]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
-                        <Lock className="w-5 h-5 text-[#64C8B4]" />
+                      <div className="w-11 h-11 bg-[#16CE5E]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
+                        <Lock className="w-5 h-5 text-[#16CE5E]" />
                       </div>
                       <div>
                         <p className="font-bold text-gray-900 mb-1.5 tracking-tight">On-Chain</p>
@@ -739,11 +739,11 @@ export default function InboxPage() {
 
                   <button
                     onClick={() => setSendType("offchain")}
-                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#64C8B4] hover:bg-[#64C8B4]/5 transition-all duration-300 text-left glass-hover"
+                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 bg-[#64C8B4]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
-                        <Send className="w-5 h-5 text-[#64C8B4]" />
+                      <div className="w-11 h-11 bg-[#16CE5E]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
+                        <Send className="w-5 h-5 text-[#16CE5E]" />
                       </div>
                       <div>
                         <p className="font-bold text-gray-900 mb-1.5 tracking-tight">Off-Chain</p>
@@ -759,7 +759,7 @@ export default function InboxPage() {
                   <div className="flex items-center gap-3 text-sm">
                     <Badge
                       className={
-                        sendType === "onchain" ? "bg-[#64C8B4]/15 text-[#64C8B4]" : "bg-gray-100 text-gray-600"
+                        sendType === "onchain" ? "bg-[#16CE5E]/15 text-[#16CE5E]" : "bg-gray-100 text-gray-600"
                       }
                     >
                       {sendType === "onchain" ? "On-Chain" : "Off-Chain"}
@@ -804,7 +804,7 @@ export default function InboxPage() {
                     <Button
                       onClick={handleSendMessage}
                       disabled={sending || !recipient || !messageContent}
-                      className="flex-1 h-12 bg-[#64C8B4] hover:bg-[#58B8A4] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300"
+                      className="flex-1 h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300"
                     >
                       {sending ? (
                         <>
@@ -863,16 +863,16 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
 
   return (
     <div
-      className={`px-6 md:px-8 py-5 md:py-6 hover:bg-white/60 transition-all duration-300 cursor-pointer glass-hover ${!message.read ? "bg-[#64C8B4]/5" : ""}`}
+      className={`px-6 md:px-8 py-5 md:py-6 hover:bg-white/60 transition-all duration-300 cursor-pointer glass-hover ${!message.read ? "bg-[#16CE5E]/5" : ""}`}
       onClick={handleExpand}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1 min-w-0">
           {isWelcomeMessage ? (
             <div
-              className={`w-11 h-11 bg-[#64C8B4]/15 rounded-[16px] flex items-center justify-center flex-shrink-0 relative`}
+              className={`w-11 h-11 bg-[#16CE5E]/15 rounded-[16px] flex items-center justify-center flex-shrink-0 relative`}
             >
-              <Mail className="w-5 h-5 text-[#64C8B4]" />
+              <Mail className="w-5 h-5 text-[#16CE5E]" />
               {!message.read && (
                 <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-gradient-to-br from-red-500 to-red-600 rounded-full border-2 border-white shadow-sm" />
               )}
@@ -900,7 +900,7 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
                   variant={message.onChain ? "default" : "secondary"}
                   className={
                     message.onChain
-                      ? "bg-[#64C8B4]/15 text-[#64C8B4] hover:bg-[#64C8B4]/15 text-xs font-semibold h-5 px-2.5 rounded-full"
+                      ? "bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 text-xs font-semibold h-5 px-2.5 rounded-full"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-100 text-xs font-semibold h-5 px-2.5 rounded-full"
                   }
                 >
@@ -942,7 +942,7 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
                         </p>
                       </div>
                       {message.onChain && (
-                        <Badge className="bg-[#64C8B4]/15 text-[#64C8B4] hover:bg-[#64C8B4]/15 text-xs font-semibold h-6 px-3 rounded-full">
+                        <Badge className="bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 text-xs font-semibold h-6 px-3 rounded-full">
                           On-Chain
                         </Badge>
                       )}
@@ -978,7 +978,7 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
                         href={`https://solscan.io/tx/${message.txSignature}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center text-sm text-[#64C8B4] hover:text-[#58B8A4] transition-colors font-semibold tracking-tight"
+                        className="inline-flex items-center text-sm text-[#16CE5E] hover:text-[#14BA54] transition-colors font-semibold tracking-tight"
                       >
                         View Transaction
                         <ExternalLink className="ml-2 h-4 w-4" />
