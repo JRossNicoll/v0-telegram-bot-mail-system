@@ -70,7 +70,12 @@ export default function Home() {
             </div>
 
             <div className="text-center mb-5">
-              <p className="text-[13px] text-[#000000]/45 font-medium tracking-tight">Private. Fast. Encrypted.</p>
+              <p className="text-[13px] text-[#000000]/45 font-medium tracking-tight inline-flex items-center gap-2">
+                <span>Private. Fast.</span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#16CE5E]/10 text-[#16CE5E] font-semibold">
+                  Courier
+                </span>
+              </p>
             </div>
 
             <div className="space-y-4">
