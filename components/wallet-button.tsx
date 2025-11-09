@@ -25,8 +25,14 @@ export function WalletConnectButton() {
         select(phantomWallet.adapter.name)
         await connect()
       }
-    } catch (error) {
-      console.error("Failed to connect wallet:", error)
+    } catch (error: any) {
+      if (error?.message?.includes("User rejected")) {
+        console.log("[v0] Wallet connection cancelled by user")
+        // Silently handle rejection - user intentionally cancelled
+      } else {
+        console.error("[v0] Failed to connect wallet:", error)
+      }
+      // Don't throw - prevents uncaught error in console
     }
   }
 
