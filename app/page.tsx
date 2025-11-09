@@ -63,7 +63,7 @@ export default function Home() {
             <div className="pt-4 border-t border-black/[0.06]">
               <div className="flex items-center justify-center gap-2 text-xs text-[#000000]/40 font-medium">
                 <Lock className="w-3.5 h-3.5" />
-                <span>Secure connection via Solana</span>
+                <span>Secure Connection via Phantom</span>
               </div>
             </div>
           </div>
