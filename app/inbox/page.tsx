@@ -506,7 +506,9 @@ export default function InboxPage() {
         <header className="glass-panel border-b border-white/40 float-shadow">
           <div className="px-6 md:px-10 h-20 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-lg font-semibold text-gray-900 tracking-tight">Courier</h1>
+              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 shadow-sm">
+                <span className="text-sm font-semibold text-gray-900 tracking-tight">Courier</span>
+              </div>
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
                 <Lock className="w-3.5 h-3.5 text-[#16CE5E]" />
                 <span className="text-xs font-semibold text-[#16CE5E] tracking-tight">Encrypted</span>
