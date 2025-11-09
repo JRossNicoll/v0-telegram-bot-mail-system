@@ -40,8 +40,8 @@ export default function Home() {
           {/* Radial highlight behind card for premium depth */}
           <div className="absolute inset-0 bg-gradient-radial from-white/60 via-transparent to-transparent blur-2xl scale-105 -z-10" />
 
-          <div className="glass-card rounded-[22px] p-8 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border border-white/60 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] transition-all duration-500">
-            <div className="flex justify-center mb-4">
+          <div className="glass-card rounded-[22px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border border-white/60 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] transition-all duration-500">
+            <div className="flex justify-center mb-3">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-[18px] blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <img
@@ -52,8 +52,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="text-center mb-5 space-y-0.5">
-              <h1 className="text-[32px] font-semibold text-[#000000] tracking-[-0.02em] leading-tight">Courier</h1>
+            <div className="text-center mb-5">
               <p className="text-[13px] text-[#000000]/45 font-medium tracking-tight">Private. Fast. Encrypted.</p>
             </div>
 
