@@ -1,7 +1,6 @@
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL!
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!
+const UPSTASH_URL = process.env.KV_REST_API_URL!
+const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN!
 
-// Minimal REST helper. If you prefer the official SDK, swap it in.
 async function upstash(command: string[], cache = "no-store") {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) throw new Error("Redis env not set")
   const res = await fetch(`${UPSTASH_URL}`, {
@@ -10,15 +9,15 @@ async function upstash(command: string[], cache = "no-store") {
       Authorization: `Bearer ${UPSTASH_TOKEN}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify([command]),
+    body: JSON.stringify(command),
     cache,
     next: { revalidate: 0 },
   })
   const data = await res.json()
-  if (!Array.isArray(data) || !data[0] || data[0].error) {
-    throw new Error(data[0]?.error || "Redis error")
+  if (data.error) {
+    throw new Error(data.error || "Redis error")
   }
-  return data[0].result
+  return data.result
 }
 
 export const redis = {

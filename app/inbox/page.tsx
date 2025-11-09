@@ -390,19 +390,19 @@ export default function InboxPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F8F9FA] via-[#FAFBFC] to-[#F5F7F9] flex">
-      <aside className="md:hidden fixed left-0 top-0 bottom-0 w-20 glass-panel flex flex-col items-center py-8 space-y-8 z-30 border-r border-white/40">
+      <aside className="md:hidden fixed left-0 top-0 bottom-0 w-16 glass-panel flex flex-col items-center py-6 space-y-6 z-30 border-r border-white/40">
         <Link href="/" className="relative group">
           <div className="absolute inset-0 bg-[#16CE5E] opacity-0 group-hover:opacity-20 blur-2xl transition-all duration-500 rounded-2xl" />
-          <div className="relative z-10 w-12 h-12 rounded-[18px] glass-card flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-            <Package className="w-7 h-7 text-[#16CE5E]" />
+          <div className="relative z-10 w-10 h-10 rounded-[16px] glass-card flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+            <Package className="w-6 h-6 text-[#16CE5E]" />
           </div>
         </Link>
 
-        <nav className="flex-1 flex flex-col space-y-5">
-          <button className="relative w-12 h-12 rounded-[18px] glass-card flex items-center justify-center text-[#16CE5E] mint-glow">
+        <nav className="flex-1 flex flex-col space-y-4">
+          <button className="relative w-10 h-10 rounded-[16px] glass-card flex items-center justify-center text-[#16CE5E] mint-glow">
             <Mail className="w-5 h-5" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+              <span className="absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-lg">
                 {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
@@ -410,31 +410,31 @@ export default function InboxPage() {
 
           <button
             onClick={() => loadMessages(walletAddress)}
-            className="relative w-12 h-12 rounded-[18px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 hover:scale-105"
+            className="relative w-10 h-10 rounded-[16px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 active:scale-95"
           >
-            <RefreshCw className="w-5 h-5" />
+            <RefreshCw className="w-4 h-4" />
           </button>
 
           <button
             onClick={toggleNotifications}
-            className="relative w-12 h-12 rounded-[18px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 hover:scale-105"
+            className="relative w-10 h-10 rounded-[16px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 active:scale-95"
           >
-            {notificationsEnabled ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+            {notificationsEnabled ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
           </button>
 
           <button
             onClick={() => setShowSendModal(true)}
-            className="relative w-12 h-12 rounded-[18px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 hover:scale-105"
+            className="relative w-10 h-10 rounded-[16px] bg-white/40 backdrop-blur-xl flex items-center justify-center text-gray-600 hover:bg-white/70 hover:text-gray-900 transition-all duration-300 active:scale-95"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4" />
           </button>
         </nav>
 
         <button
           onClick={handleLogout}
-          className="w-12 h-12 rounded-[18px] hover:bg-white/40 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all duration-300"
+          className="w-10 h-10 rounded-[16px] hover:bg-white/40 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all duration-300 active:scale-95"
         >
-          <LogOut className="w-5 h-5" />
+          <LogOut className="w-4 h-4" />
         </button>
       </aside>
 
@@ -502,12 +502,12 @@ export default function InboxPage() {
       </aside>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col ml-20 md:ml-0">
+      <div className="flex-1 flex flex-col ml-16 md:ml-0">
         <header className="glass-panel border-b border-white/40 float-shadow">
-          <div className="px-6 md:px-10 h-20 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 shadow-sm">
-                <span className="text-sm font-semibold text-gray-900 tracking-tight">Courier</span>
+          <div className="px-4 md:px-10 h-16 md:h-20 flex items-center justify-between">
+            <div className="flex items-center gap-2 md:gap-4 overflow-x-auto">
+              <div className="inline-flex items-center px-2.5 md:px-3 py-1 md:py-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 shadow-sm flex-shrink-0">
+                <span className="text-xs md:text-sm font-semibold text-gray-900 tracking-tight">Courier</span>
               </div>
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
                 <Lock className="w-3.5 h-3.5 text-[#16CE5E]" />
@@ -517,7 +517,7 @@ export default function InboxPage() {
                 <button
                   onClick={generateLinkCode}
                   disabled={generatingCode}
-                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card hover:bg-white/60 transition-all duration-300"
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card hover:bg-white/60 transition-all duration-300 active:scale-95"
                 >
                   <LinkIcon className="w-3.5 h-3.5 text-gray-600" />
                   <span className="text-xs font-semibold text-gray-600 tracking-tight">Link Telegram</span>
@@ -530,22 +530,26 @@ export default function InboxPage() {
                 </div>
               )}
               {unreadCount > 0 && (
-                <Badge className="bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-6 px-3 text-xs font-bold rounded-full shadow-lg">
+                <Badge className="bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-5 md:h-6 px-2 md:px-3 text-[10px] md:text-xs font-bold rounded-full shadow-lg">
                   {unreadCount}
                 </Badge>
               )}
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={toggleNotifications}
-                className="relative text-gray-600 hover:text-gray-900 hover:bg-white/50 w-10 h-10 p-0 rounded-[14px] transition-all duration-300"
+                className="relative text-gray-600 hover:text-gray-900 hover:bg-white/50 w-9 h-9 md:w-10 md:h-10 p-0 rounded-[12px] md:rounded-[14px] transition-all duration-300 active:scale-95"
               >
-                {notificationsEnabled ? <Bell className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}
+                {notificationsEnabled ? (
+                  <Bell className="h-4 w-4 md:h-5 md:w-5" />
+                ) : (
+                  <BellOff className="h-4 w-4 md:h-5 md:w-5" />
+                )}
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                  <span className="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 bg-gradient-to-br from-red-500 to-red-600 text-white text-[9px] md:text-[10px] font-bold rounded-full w-4 h-4 md:w-5 md:h-5 flex items-center justify-center shadow-lg">
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
@@ -554,33 +558,37 @@ export default function InboxPage() {
               <div className="relative">
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-3 px-4 py-2 rounded-[14px] hover:bg-white/50 transition-all duration-300 glass-hover"
+                  className="flex items-center gap-2 md:gap-3 px-2 md:px-4 py-1.5 md:py-2 rounded-[12px] md:rounded-[14px] hover:bg-white/50 transition-all duration-300 glass-hover active:scale-95"
                 >
                   <img
                     src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-0iWevp0tLXfJLfE4K0j2w597j1PN2r.jpg"
                     alt="User"
-                    className="w-8 h-8 rounded-[12px] flex-shrink-0"
+                    className="w-7 h-7 md:w-8 md:h-8 rounded-[10px] md:rounded-[12px] flex-shrink-0"
                   />
-                  <span className="text-sm font-mono text-gray-700 hidden sm:inline tracking-tight">
+                  <span className="text-xs md:text-sm font-mono text-gray-700 hidden sm:inline tracking-tight">
                     {formatAddress(walletAddress)}
                   </span>
-                  <ChevronDown className="h-4 w-4 text-gray-500" />
+                  <ChevronDown className="h-3 w-3 md:h-4 md:w-4 text-gray-500" />
                 </button>
 
                 {showDropdown && (
-                  <div className="absolute right-0 mt-3 w-72 glass-card rounded-[20px] float-shadow py-2 z-10 border border-white/60">
-                    <div className="px-5 py-4 border-b border-gray-200/50">
-                      <p className="text-xs text-gray-500 font-medium mb-1.5 tracking-tight">
+                  <div className="absolute right-0 mt-2 md:mt-3 w-64 md:w-72 glass-card rounded-[18px] md:rounded-[20px] float-shadow py-2 z-10 border border-white/60">
+                    <div className="px-4 md:px-5 py-3 md:py-4 border-b border-gray-200/50">
+                      <p className="text-xs text-gray-500 font-medium mb-1 md:mb-1.5 tracking-tight">
                         {walletSource === "external" ? "Connected Wallet" : "Custodial Wallet"}
                       </p>
-                      <p className="text-sm font-mono text-gray-900 truncate tracking-tight">{walletAddress}</p>
+                      <p className="text-xs md:text-sm font-mono text-gray-900 truncate tracking-tight">
+                        {walletAddress}
+                      </p>
                       {isTelegramMiniApp && (
-                        <p className="text-[11px] text-[#16CE5E] font-semibold mt-2">📱 Telegram Mini App</p>
+                        <p className="text-[10px] md:text-[11px] text-[#16CE5E] font-semibold mt-2">
+                          📱 Telegram Mini App
+                        </p>
                       )}
                     </div>
                     <button
                       onClick={handleLogout}
-                      className="w-full px-5 py-3 text-left text-sm text-red-600 hover:bg-red-50/50 flex items-center gap-3 font-semibold tracking-tight transition-all duration-300"
+                      className="w-full px-4 md:px-5 py-2.5 md:py-3 text-left text-sm text-red-600 hover:bg-red-50/50 flex items-center gap-3 font-semibold tracking-tight transition-all duration-300 active:bg-red-50"
                     >
                       <LogOut className="h-4 w-4" />
                       Logout
@@ -592,29 +600,29 @@ export default function InboxPage() {
           </div>
         </header>
 
-        <main className="flex-1 p-6 md:p-12 overflow-y-auto">
-          <div className="max-w-6xl mx-auto space-y-8">
+        <main className="flex-1 p-4 md:p-12 overflow-y-auto">
+          <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
             <div className="flex justify-center">
-              <div className="inline-flex items-center px-5 py-2.5 glass-card rounded-full float-shadow">
+              <div className="inline-flex items-center px-4 md:px-5 py-2 md:py-2.5 glass-card rounded-full float-shadow">
                 <span className="text-sm font-semibold text-gray-700 tracking-tight">Inbox</span>
               </div>
             </div>
 
-            <div className="glass-card rounded-[28px] float-shadow border border-white/60 overflow-hidden">
-              <div className="px-6 md:px-8 pt-6 md:pt-7 pb-4 md:pb-5 border-b border-gray-200/50 flex items-center justify-between">
+            <div className="glass-card rounded-[24px] md:rounded-[28px] float-shadow border border-white/60 overflow-hidden">
+              <div className="px-4 md:px-8 pt-4 md:pt-7 pb-3 md:pb-5 border-b border-gray-200/50 flex items-center justify-between">
                 <button
                   onClick={() => setShowSendModal(true)}
-                  className="group flex items-center gap-3 h-11 px-5 hover:bg-white/60 rounded-[16px] transition-all duration-300 glass-hover"
+                  className="group flex items-center gap-2 md:gap-3 h-10 md:h-11 px-4 md:px-5 hover:bg-white/60 rounded-[14px] md:rounded-[16px] transition-all duration-300 glass-hover active:scale-95"
                 >
-                  <div className="relative w-9 h-9 rounded-[14px] bg-gradient-to-br from-[#16CE5E]/10 via-white/50 to-[#16CE5E]/5 flex items-center justify-center flex-shrink-0">
-                    <div className="absolute inset-[1px] rounded-[13px] bg-gradient-to-br from-white/90 to-white/50" />
-                    <Edit3 className="relative w-4 h-4 text-[#16CE5E]" />
+                  <div className="relative w-8 h-8 md:w-9 md:h-9 rounded-[12px] md:rounded-[14px] bg-gradient-to-br from-[#16CE5E]/10 via-white/50 to-[#16CE5E]/5 flex items-center justify-center flex-shrink-0">
+                    <div className="absolute inset-[1px] rounded-[11px] md:rounded-[13px] bg-gradient-to-br from-white/90 to-white/50" />
+                    <Edit3 className="relative w-3.5 h-3.5 md:w-4 md:h-4 text-[#16CE5E]" />
                   </div>
-                  <span className="text-[15px] font-semibold text-gray-900 tracking-tight">Compose</span>
+                  <span className="text-sm md:text-[15px] font-semibold text-gray-900 tracking-tight">Compose</span>
                 </button>
 
-                <div className="flex items-center gap-4">
-                  <p className="hidden sm:block text-sm text-gray-500 font-medium tracking-tight">
+                <div className="flex items-center gap-3 md:gap-4">
+                  <p className="hidden sm:block text-xs md:text-sm text-gray-500 font-medium tracking-tight">
                     {messages.length} message{messages.length !== 1 ? "s" : ""}
                     {unreadCount > 0 && <span className="ml-2 text-red-600 font-bold">({unreadCount} unread)</span>}
                   </p>
@@ -624,59 +632,63 @@ export default function InboxPage() {
                     size="sm"
                     onClick={() => loadMessages(walletAddress)}
                     disabled={loading}
-                    className="h-10 w-10 p-0 text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-[14px] transition-all duration-300"
+                    className="h-9 w-9 md:h-10 md:w-10 p-0 text-gray-600 hover:text-gray-900 hover:bg-white/50 rounded-[12px] md:rounded-[14px] transition-all duration-300 active:scale-95"
                   >
-                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <RefreshCw className="h-5 w-5" />}
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4 md:h-5 md:w-5" />
+                    )}
                   </Button>
                 </div>
               </div>
 
               <Tabs defaultValue="all" className="w-full">
-                <div className="border-b border-gray-200/50 px-6 md:px-8 pt-4">
-                  <TabsList className="bg-transparent h-11 gap-2">
+                <div className="border-b border-gray-200/50 px-4 md:px-8 pt-3 md:pt-4">
+                  <TabsList className="bg-transparent h-10 md:h-11 gap-1 md:gap-2">
                     <TabsTrigger
                       value="all"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[12px] md:rounded-[14px] px-3 md:px-5 font-semibold text-xs md:text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       All
                       {unreadMessages.length > 0 ? (
-                        <Badge className="ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-5 px-2 text-xs font-bold rounded-full shadow-sm">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full shadow-sm">
                           {unreadMessages.length}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full">
                           {messages.length}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="onchain"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[12px] md:rounded-[14px] px-3 md:px-5 font-semibold text-xs md:text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       <span className="hidden sm:inline">On-Chain</span>
                       <span className="sm:hidden">On</span>
                       {unreadOnChain > 0 ? (
-                        <Badge className="ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-5 px-2 text-xs font-bold rounded-full shadow-sm">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full shadow-sm">
                           {unreadOnChain}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full">
                           {onChainMessages.length}
                         </Badge>
                       )}
                     </TabsTrigger>
                     <TabsTrigger
                       value="offchain"
-                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[14px] px-5 font-semibold text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
+                      className="data-[state=active]:glass-card data-[state=active]:text-[#16CE5E] data-[state=inactive]:text-gray-500 rounded-[12px] md:rounded-[14px] px-3 md:px-5 font-semibold text-xs md:text-sm tracking-tight transition-all duration-300 data-[state=active]:shadow-sm"
                     >
                       <span className="hidden sm:inline">Off-Chain</span>
                       <span className="sm:hidden">Off</span>
                       {unreadOffChain > 0 ? (
-                        <Badge className="ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-5 px-2 text-xs font-bold rounded-full shadow-sm">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full shadow-sm">
                           {unreadOffChain}
                         </Badge>
                       ) : (
-                        <Badge className="ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-5 px-2 text-xs font-bold rounded-full">
+                        <Badge className="ml-1.5 md:ml-2.5 bg-[#16CE5E]/15 text-[#16CE5E] hover:bg-[#16CE5E]/15 h-4 md:h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-bold rounded-full">
                           {offChainMessages.length}
                         </Badge>
                       )}
@@ -736,9 +748,9 @@ export default function InboxPage() {
           </div>
         </main>
 
-        <footer className="glass-panel border-t border-white/40 px-6 md:px-10 py-5">
-          <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-6 text-xs font-medium tracking-tight md:mx-auto">
+        <footer className="glass-panel border-t border-white/40 px-4 md:px-10 py-4 md:py-5">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+            <div className="flex items-center gap-4 md:gap-6 text-xs font-medium tracking-tight md:mx-auto">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#16CE5E] shadow-sm" />
                 <span className="text-gray-600">Secure</span>
@@ -753,6 +765,31 @@ export default function InboxPage() {
                 <div className="w-2 h-2 rounded-full bg-[#16CE5E] shadow-sm" />
                 <span className="text-gray-600">Online</span>
               </div>
+            </div>
+
+            <div className="flex md:hidden items-center gap-3">
+              <a
+                href="https://x.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all duration-300 active:scale-95"
+                aria-label="X (Twitter)"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+              <a
+                href="https://t.me"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all duration-300 active:scale-95"
+                aria-label="Telegram"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z" />
+                </svg>
+              </a>
             </div>
 
             <div className="hidden md:flex items-center gap-3 absolute right-10">
@@ -785,35 +822,35 @@ export default function InboxPage() {
 
       {showLinkModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xl flex items-center justify-center z-50 p-4">
-          <div className="glass-card rounded-[28px] float-shadow w-full max-w-md overflow-hidden border border-white/60">
-            <div className="px-7 py-5 border-b border-gray-200/50 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Link Telegram</h2>
+          <div className="glass-card rounded-[24px] md:rounded-[28px] float-shadow w-full max-w-md overflow-hidden border border-white/60">
+            <div className="px-5 md:px-7 py-4 md:py-5 border-b border-gray-200/50 flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">Link Telegram</h2>
               <button
                 onClick={() => {
                   setShowLinkModal(false)
                   setLinkCode("")
                   setCodeCopied(false)
                 }}
-                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-all duration-300"
+                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-all duration-300 active:scale-95"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-7 space-y-6">
+            <div className="p-5 md:p-7 space-y-5 md:space-y-6">
               <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-[#16CE5E]/10 rounded-[18px] flex items-center justify-center mx-auto">
-                  <LinkIcon className="w-8 h-8 text-[#16CE5E]" />
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-[#16CE5E]/10 rounded-[16px] md:rounded-[18px] flex items-center justify-center mx-auto">
+                  <LinkIcon className="w-7 h-7 md:w-8 md:h-8 text-[#16CE5E]" />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600 font-medium tracking-tight mb-2">Your 6-digit linking code:</p>
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="text-4xl font-bold text-gray-900 tracking-wider font-mono bg-gray-50/50 px-6 py-3 rounded-[14px]">
+                  <div className="flex items-center justify-center gap-2 md:gap-3">
+                    <div className="text-3xl md:text-4xl font-bold text-gray-900 tracking-wider font-mono bg-gray-50/50 px-5 md:px-6 py-2.5 md:py-3 rounded-[14px]">
                       {linkCode}
                     </div>
                     <button
                       onClick={copyCode}
-                      className="w-12 h-12 bg-white/70 hover:bg-white rounded-[12px] flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-300"
+                      className="w-11 h-11 md:w-12 md:h-12 bg-white/70 hover:bg-white rounded-[12px] flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-300 active:scale-95"
                     >
                       {codeCopied ? <Check className="w-5 h-5 text-[#16CE5E]" /> : <Copy className="w-5 h-5" />}
                     </button>
@@ -852,7 +889,7 @@ export default function InboxPage() {
                   setCodeCopied(false)
                   checkTelegramLink(walletAddress)
                 }}
-                className="w-full h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300"
+                className="w-full h-11 md:h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300 active:scale-95"
               >
                 Done
               </Button>
@@ -863,9 +900,9 @@ export default function InboxPage() {
 
       {showSendModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xl flex items-center justify-center z-50 p-4">
-          <div className="glass-card rounded-[28px] float-shadow w-full max-w-lg overflow-hidden border border-white/60">
-            <div className="px-7 py-5 border-b border-gray-200/50 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Send Message</h2>
+          <div className="glass-card rounded-[24px] md:rounded-[28px] float-shadow w-full max-w-lg overflow-hidden border border-white/60">
+            <div className="px-5 md:px-7 py-4 md:py-5 border-b border-gray-200/50 flex items-center justify-between">
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 tracking-tight">Send Message</h2>
               <button
                 onClick={() => {
                   setShowSendModal(false)
@@ -873,27 +910,29 @@ export default function InboxPage() {
                   setRecipient("")
                   setMessageContent("")
                 }}
-                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-all duration-300"
+                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-all duration-300 active:scale-95"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-7 space-y-7">
+            <div className="p-5 md:p-7 space-y-5 md:space-y-7">
               {!sendType ? (
-                <div className="space-y-5">
+                <div className="space-y-4 md:space-y-5">
                   <p className="text-sm text-gray-600 font-medium tracking-tight">Choose delivery method:</p>
 
                   <button
                     onClick={() => setSendType("onchain")}
-                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover"
+                    className="w-full p-4 md:p-5 rounded-[16px] md:rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover active:scale-98"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 bg-[#16CE5E]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
-                        <Lock className="w-5 h-5 text-[#16CE5E]" />
+                    <div className="flex items-start gap-3 md:gap-4">
+                      <div className="w-10 h-10 md:w-11 md:h-11 bg-[#16CE5E]/10 rounded-[13px] md:rounded-[14px] flex items-center justify-center flex-shrink-0">
+                        <Lock className="w-4.5 h-4.5 md:w-5 md:h-5 text-[#16CE5E]" />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 mb-1.5 tracking-tight">On-Chain</p>
+                        <p className="font-bold text-gray-900 mb-1 md:mb-1.5 tracking-tight text-sm md:text-base">
+                          On-Chain
+                        </p>
                         <p className="text-xs text-gray-600 leading-relaxed tracking-tight">
                           Permanent blockchain record. Requires SOL for fees (~0.00001 SOL). Verifiable on Solscan.
                         </p>
@@ -903,14 +942,16 @@ export default function InboxPage() {
 
                   <button
                     onClick={() => setSendType("offchain")}
-                    className="w-full p-5 rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover"
+                    className="w-full p-4 md:p-5 rounded-[16px] md:rounded-[18px] border border-gray-200/50 hover:border-[#16CE5E] hover:bg-[#16CE5E]/5 transition-all duration-300 text-left glass-hover active:scale-98"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 bg-[#16CE5E]/10 rounded-[14px] flex items-center justify-center flex-shrink-0">
-                        <Send className="w-5 h-5 text-[#16CE5E]" />
+                    <div className="flex items-start gap-3 md:gap-4">
+                      <div className="w-10 h-10 md:w-11 md:h-11 bg-[#16CE5E]/10 rounded-[13px] md:rounded-[14px] flex items-center justify-center flex-shrink-0">
+                        <Send className="w-4.5 h-4.5 md:w-5 md:h-5 text-[#16CE5E]" />
                       </div>
                       <div>
-                        <p className="font-bold text-gray-900 mb-1.5 tracking-tight">Off-Chain</p>
+                        <p className="font-bold text-gray-900 mb-1 md:mb-1.5 tracking-tight text-sm md:text-base">
+                          Off-Chain
+                        </p>
                         <p className="text-xs text-gray-600 leading-relaxed tracking-tight">
                           Instant delivery. No transaction fees. Stored in encrypted database.
                         </p>
@@ -919,7 +960,7 @@ export default function InboxPage() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-5">
+                <div className="space-y-4 md:space-y-5">
                   <div className="flex items-center gap-3 text-sm">
                     <Badge
                       className={
@@ -942,7 +983,7 @@ export default function InboxPage() {
                       placeholder="Recipient wallet address"
                       value={recipient}
                       onChange={(e) => setRecipient(e.target.value)}
-                      className="h-12 bg-gray-50/50 border-gray-200/50 rounded-[14px] font-mono text-sm backdrop-blur-xl"
+                      className="h-11 md:h-12 bg-gray-50/50 border-gray-200/50 rounded-[14px] font-mono text-sm backdrop-blur-xl"
                     />
                   </div>
 
@@ -957,18 +998,18 @@ export default function InboxPage() {
                     />
                   </div>
 
-                  <div className="flex gap-4 pt-5">
+                  <div className="flex gap-3 md:gap-4 pt-4 md:pt-5">
                     <Button
                       onClick={() => setSendType(null)}
                       variant="outline"
-                      className="flex-1 h-12 rounded-[14px] font-semibold border-gray-200/50 hover:bg-white/60"
+                      className="flex-1 h-11 md:h-12 rounded-[14px] font-semibold border-gray-200/50 hover:bg-white/60 active:scale-95"
                     >
                       Back
                     </Button>
                     <Button
                       onClick={handleSendMessage}
                       disabled={sending || !recipient || !messageContent}
-                      className="flex-1 h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300"
+                      className="flex-1 h-11 md:h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300 active:scale-95"
                     >
                       {sending ? (
                         <>
