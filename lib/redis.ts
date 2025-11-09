@@ -1,9 +1,9 @@
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL!;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!;
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL!
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN!
 
 // Minimal REST helper. If you prefer the official SDK, swap it in.
 async function upstash(command: string[], cache = "no-store") {
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) throw new Error("Redis env not set");
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) throw new Error("Redis env not set")
   const res = await fetch(`${UPSTASH_URL}`, {
     method: "POST",
     headers: {
@@ -13,39 +13,60 @@ async function upstash(command: string[], cache = "no-store") {
     body: JSON.stringify([command]),
     cache,
     next: { revalidate: 0 },
-  });
-  const data = await res.json();
+  })
+  const data = await res.json()
   if (!Array.isArray(data) || !data[0] || data[0].error) {
-    throw new Error(data[0]?.error || "Redis error");
+    throw new Error(data[0]?.error || "Redis error")
   }
-  return data[0].result;
+  return data[0].result
 }
 
 export const redis = {
   // Strings
   async get(key: string) {
-    return upstash(["GET", key]);
+    return upstash(["GET", key])
   },
   async set(key: string, val: string) {
-    return upstash(["SET", key, val]);
+    return upstash(["SET", key, val])
   },
   async del(key: string) {
-    return upstash(["DEL", key]);
+    return upstash(["DEL", key])
   },
   // Lists
   async lpush(key: string, val: string) {
-    return upstash(["LPUSH", key, val]);
+    return upstash(["LPUSH", key, val])
   },
   async lrange(key: string, start = 0, stop = -1) {
-    return upstash(["LRANGE", key, String(start), String(stop)]);
+    return upstash(["LRANGE", key, String(start), String(stop)])
   },
+  // Hashes
   async hincrby(key: string, field: string, by: number) {
-    return upstash(["HINCRBY", key, field, String(by)]);
+    return upstash(["HINCRBY", key, field, String(by)])
   },
   async hget(key: string, field: string) {
-    return upstash(["HGET", key, field]);
+    return upstash(["HGET", key, field])
   },
-  async hset(key: string, field: string, value: string) {
-    return upstash(["HSET", key, field, value]);
-  }
-};
+  async hgetall(key: string) {
+    const result = await upstash(["HGETALL", key])
+    if (!Array.isArray(result)) return {}
+    const obj: Record<string, string> = {}
+    for (let i = 0; i < result.length; i += 2) {
+      obj[result[i]] = result[i + 1]
+    }
+    return obj
+  },
+  async hset(key: string, data: Record<string, string>) {
+    const args = ["HSET", key]
+    for (const [k, v] of Object.entries(data)) {
+      args.push(k, v)
+    }
+    return upstash(args)
+  },
+  // Other
+  async keys(pattern: string) {
+    return upstash(["KEYS", pattern])
+  },
+  async expire(key: string, seconds: number) {
+    return upstash(["EXPIRE", key, String(seconds)])
+  },
+}

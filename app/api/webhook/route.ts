@@ -1,6 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { sendTelegramMessage } from "@/lib/telegram/api"
-import { connectWallet, getUser, getEncryptedPrivateKey, getTelegramIdByWallet } from "@/lib/storage/users"
+import {
+  connectWallet,
+  getUser,
+  getEncryptedPrivateKey,
+  getTelegramIdByWallet,
+  linkTelegramWithCode,
+} from "@/lib/storage/users"
 import { saveMessage, getMessagesForWallet } from "@/lib/storage/messages"
 import { sendOnChainMessage, getWalletBalance } from "@/lib/solana/transactions"
 import {
@@ -662,10 +668,10 @@ export async function POST(request: NextRequest) {
           const recipientTelegramId = await getTelegramIdByWallet(toWallet)
           if (recipientTelegramId) {
             try {
-            await sendTelegramMessage(
-              Number.parseInt(recipientTelegramId, 10),
-              `📬 <b>New Message</b>\n\n` +
-                `From: <code>${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}</code>\n` +
+              await sendTelegramMessage(
+                Number.parseInt(recipientTelegramId, 10),
+                `📬 <b>New Message</b>\n\n` +
+                  `From: <code>${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}</code>\n` +
                   `Message: <i>${messageText}</i>`,
                 {
                   reply_markup: {
@@ -779,11 +785,80 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    if (text.startsWith("/link")) {
+      const parts = text.split(" ")
+      if (parts.length < 2) {
+        await sendTelegramMessage(
+          chatId,
+          "📱 <b>Link Your Wallet</b>\n\n" +
+            "To link your wallet from the web app:\n\n" +
+            "1. Connect your Phantom wallet in the web app\n" +
+            "2. Go to your inbox and click 'Link Telegram'\n" +
+            "3. You'll receive a 6-digit code\n" +
+            "4. Send the code here: /link <code>\n\n" +
+            "<i>Example: /link 123456</i>",
+        )
+        return NextResponse.json({ ok: true })
+      }
+
+      const code = parts[1].trim()
+
+      // Validate code format (6 digits)
+      if (!/^\d{6}$/.test(code)) {
+        await sendTelegramMessage(chatId, "❌ Invalid code format. Please use a 6-digit code.\n\nExample: /link 123456")
+        return NextResponse.json({ ok: true })
+      }
+
+      const success = await linkTelegramWithCode(Number(userId), code)
+
+      if (success) {
+        const user = await getUser(userId)
+        await sendTelegramMessage(
+          chatId,
+          `✅ <b>Wallet Linked Successfully!</b>\n\n` +
+            `Your Telegram account is now linked to:\n<code>${user?.walletAddress}</code>\n\n` +
+            `You can now receive message notifications and use both the web app and Telegram bot!`,
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "📬 View Inbox",
+                    callback_data: "view_inbox",
+                  },
+                  {
+                    text: "📤 Send Message",
+                    callback_data: "choose_send_type",
+                  },
+                ],
+                [
+                  {
+                    text: "💼 Wallet",
+                    callback_data: "wallet_menu",
+                  },
+                ],
+              ],
+            },
+          },
+        )
+      } else {
+        await sendTelegramMessage(
+          chatId,
+          "❌ <b>Link Failed</b>\n\n" +
+            "The code is invalid or has expired.\n\n" +
+            "Codes expire after 10 minutes. Please generate a new code from the web app and try again.",
+        )
+      }
+
+      return NextResponse.json({ ok: true })
+    }
+
     if (text === "/help") {
       await sendTelegramMessage(
         chatId,
         "📬 <b>Solana Mail Bot Commands:</b>\n\n" +
           "/connect &lt;wallet_address&gt; - Link your Solana wallet\n" +
+          "/link &lt;code&gt; - Link wallet from web app using 6-digit code\n" +
           "/send &lt;wallet&gt; &lt;message&gt; - Send off-chain message\n" +
           "/sendchain &lt;wallet_address&gt; &lt;message&gt; - Send on-chain message\n" +
           "/inbox - Check your messages\n" +

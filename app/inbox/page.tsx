@@ -20,6 +20,9 @@ import {
   X,
   Edit3,
   Package,
+  LinkIcon,
+  Copy,
+  Check,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -55,6 +58,11 @@ export default function InboxPage() {
   const [walletSource, setWalletSource] = useState<"external" | "custodial">("custodial")
   const { connected, publicKey } = useWallet()
   const [isTelegramMiniApp, setIsTelegramMiniApp] = useState(false)
+  const [telegramLinked, setTelegramLinked] = useState(false)
+  const [showLinkModal, setShowLinkModal] = useState(false)
+  const [linkCode, setLinkCode] = useState("")
+  const [generatingCode, setGeneratingCode] = useState(false)
+  const [codeCopied, setCodeCopied] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -75,10 +83,10 @@ export default function InboxPage() {
       localStorage.setItem("walletAddress", connectedAddress)
       localStorage.setItem("walletSource", "external")
       loadMessages(connectedAddress)
+      checkTelegramLink(connectedAddress)
       return
     }
 
-    // Fallback to localStorage
     const savedWallet = localStorage.getItem("walletAddress")
     const savedSource = localStorage.getItem("walletSource")
     const notifStatus = localStorage.getItem("notifications") === "enabled"
@@ -89,6 +97,7 @@ export default function InboxPage() {
       setNotificationsEnabled(notifStatus)
       setWalletSource(savedSource === "external" ? "external" : "custodial")
       loadMessages(savedWallet)
+      checkTelegramLink(savedWallet)
     } else if (!connected) {
       router.push("/")
     }
@@ -102,11 +111,53 @@ export default function InboxPage() {
     const interval = setInterval(() => {
       if (savedWallet) {
         loadMessages(savedWallet)
+        checkTelegramLink(savedWallet)
       }
     }, 30000)
 
     return () => clearInterval(interval)
   }, [router, connected, publicKey, mounted])
+
+  const checkTelegramLink = async (address: string) => {
+    try {
+      const response = await fetch(`/api/check-telegram-link?wallet=${address}`)
+      const data = await response.json()
+      if (data.success) {
+        setTelegramLinked(data.isLinked)
+      }
+    } catch (error) {
+      console.error("[v0] Error checking Telegram link:", error)
+    }
+  }
+
+  const generateLinkCode = async () => {
+    setGeneratingCode(true)
+    try {
+      const response = await fetch("/api/generate-link-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ wallet: walletAddress }),
+      })
+      const data = await response.json()
+      if (data.success) {
+        setLinkCode(data.code)
+        setShowLinkModal(true)
+      } else {
+        alert("Failed to generate link code")
+      }
+    } catch (error) {
+      console.error("[v0] Error generating link code:", error)
+      alert("Error generating link code")
+    } finally {
+      setGeneratingCode(false)
+    }
+  }
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(linkCode)
+    setCodeCopied(true)
+    setTimeout(() => setCodeCopied(false), 2000)
+  }
 
   if (!mounted) {
     return (
@@ -460,6 +511,22 @@ export default function InboxPage() {
                 <Lock className="w-3.5 h-3.5 text-[#16CE5E]" />
                 <span className="text-xs font-semibold text-[#16CE5E] tracking-tight">Encrypted</span>
               </div>
+              {!isTelegramMiniApp && !telegramLinked && (
+                <button
+                  onClick={generateLinkCode}
+                  disabled={generatingCode}
+                  className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card hover:bg-white/60 transition-all duration-300"
+                >
+                  <LinkIcon className="w-3.5 h-3.5 text-gray-600" />
+                  <span className="text-xs font-semibold text-gray-600 tracking-tight">Link Telegram</span>
+                </button>
+              )}
+              {telegramLinked && !isTelegramMiniApp && (
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
+                  <Check className="w-3.5 h-3.5 text-[#16CE5E]" />
+                  <span className="text-xs font-semibold text-[#16CE5E] tracking-tight">Telegram Linked</span>
+                </div>
+              )}
               {unreadCount > 0 && (
                 <Badge className="bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-500 hover:to-red-600 h-6 px-3 text-xs font-bold rounded-full shadow-lg">
                   {unreadCount}
@@ -713,6 +780,84 @@ export default function InboxPage() {
           </div>
         </footer>
       </div>
+
+      {showLinkModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xl flex items-center justify-center z-50 p-4">
+          <div className="glass-card rounded-[28px] float-shadow w-full max-w-md overflow-hidden border border-white/60">
+            <div className="px-7 py-5 border-b border-gray-200/50 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900 tracking-tight">Link Telegram</h2>
+              <button
+                onClick={() => {
+                  setShowLinkModal(false)
+                  setLinkCode("")
+                  setCodeCopied(false)
+                }}
+                className="w-9 h-9 rounded-[12px] hover:bg-white/50 flex items-center justify-center text-gray-500 hover:text-gray-900 transition-all duration-300"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-7 space-y-6">
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-[#16CE5E]/10 rounded-[18px] flex items-center justify-center mx-auto">
+                  <LinkIcon className="w-8 h-8 text-[#16CE5E]" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 font-medium tracking-tight mb-2">Your 6-digit linking code:</p>
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="text-4xl font-bold text-gray-900 tracking-wider font-mono bg-gray-50/50 px-6 py-3 rounded-[14px]">
+                      {linkCode}
+                    </div>
+                    <button
+                      onClick={copyCode}
+                      className="w-12 h-12 bg-white/70 hover:bg-white rounded-[12px] flex items-center justify-center text-gray-600 hover:text-gray-900 transition-all duration-300"
+                    >
+                      {codeCopied ? <Check className="w-5 h-5 text-[#16CE5E]" /> : <Copy className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50/50 rounded-[18px] p-5 space-y-3">
+                <p className="text-sm font-semibold text-gray-900 tracking-tight">How to link:</p>
+                <ol className="text-sm text-gray-600 space-y-2 tracking-tight">
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-[#16CE5E]">1.</span>
+                    <span>Open Telegram and find the Courier bot</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-[#16CE5E]">2.</span>
+                    <span>
+                      Send the command: <code className="bg-white px-2 py-0.5 rounded text-xs">/link {linkCode}</code>
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="font-bold text-[#16CE5E]">3.</span>
+                    <span>Your wallet will be linked to your Telegram account</span>
+                  </li>
+                </ol>
+              </div>
+
+              <p className="text-xs text-gray-500 text-center tracking-tight">
+                This code expires in 10 minutes. You'll receive message notifications on Telegram once linked.
+              </p>
+
+              <Button
+                onClick={() => {
+                  setShowLinkModal(false)
+                  setLinkCode("")
+                  setCodeCopied(false)
+                  checkTelegramLink(walletAddress)
+                }}
+                className="w-full h-12 bg-[#16CE5E] hover:bg-[#14BA54] text-white font-bold rounded-[14px] shadow-lg transition-all duration-300"
+              >
+                Done
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showSendModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xl flex items-center justify-center z-50 p-4">
