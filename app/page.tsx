@@ -57,7 +57,7 @@ export default function Home() {
           {/* Radial highlight behind card for premium depth */}
           <div className="absolute inset-0 bg-gradient-radial from-white/60 via-transparent to-transparent blur-2xl scale-105 -z-10" />
 
-          <div className="glass-card rounded-[22px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border border-[#16CE5E]/8 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] hover:border-[#16CE5E]/12 transition-all duration-500 ring-1 ring-[#16CE5E]/5">
+          <div className="glass-card rounded-[22px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.06),0_20px_48px_rgba(0,0,0,0.08)] border-2 border-[#16CE5E]/12 backdrop-blur-2xl bg-white/90 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05),0_12px_32px_rgba(0,0,0,0.08),0_24px_56px_rgba(0,0,0,0.10)] hover:border-[#16CE5E]/18 transition-all duration-500 ring-2 ring-[#16CE5E]/8 ring-offset-2 ring-offset-white/50">
             <div className="flex justify-center mb-3">
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-[18px] blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -101,9 +101,9 @@ export default function Home() {
             rel="noopener noreferrer"
             className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
-            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border-2 border-[#16CE5E]/10 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/25 transition-all ring-1 ring-[#16CE5E]/5" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.05] group-hover:to-[#16CE5E]/[0.08] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.15)] transition-all duration-300" />
             <svg
               className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
@@ -119,9 +119,9 @@ export default function Home() {
             rel="noopener noreferrer"
             className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
-            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border-2 border-[#16CE5E]/10 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/25 transition-all ring-1 ring-[#16CE5E]/5" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.05] group-hover:to-[#16CE5E]/[0.08] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.15)] transition-all duration-300" />
             <svg
               className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
@@ -140,9 +140,9 @@ export default function Home() {
             rel="noopener noreferrer"
             className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
-            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border-2 border-[#16CE5E]/10 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/25 transition-all ring-1 ring-[#16CE5E]/5" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.05] group-hover:to-[#16CE5E]/[0.08] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.15)] transition-all duration-300" />
             <svg
               className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
