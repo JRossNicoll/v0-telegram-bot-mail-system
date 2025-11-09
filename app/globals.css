@@ -4,44 +4,45 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.973 0.0133 286.1503);
-  --foreground: oklch(0.3015 0.0572 282.4176);
-  --card: oklch(1.0 0 0);
-  --card-foreground: oklch(0.3015 0.0572 282.4176);
-  --popover: oklch(1.0 0 0);
-  --popover-foreground: oklch(0.3015 0.0572 282.4176);
-  --primary: oklch(0.5417 0.179 288.0332);
-  --primary-foreground: oklch(1.0 0 0);
-  --secondary: oklch(0.9174 0.0435 292.6901);
-  --secondary-foreground: oklch(0.4143 0.1039 288.1742);
-  --muted: oklch(0.958 0.0133 286.1454);
-  --muted-foreground: oklch(0.5426 0.0465 284.7435);
-  --accent: oklch(0.9221 0.0373 262.141);
-  --accent-foreground: oklch(0.3015 0.0572 282.4176);
-  --destructive: oklch(0.6861 0.2061 14.9941);
-  --destructive-foreground: oklch(1.0 0 0);
-  --border: oklch(0.9115 0.0216 285.9625);
-  --input: oklch(0.9115 0.0216 285.9625);
-  --ring: oklch(0.5417 0.179 288.0332);
-  --chart-1: oklch(0.5417 0.179 288.0332);
-  --chart-2: oklch(0.7042 0.1602 288.988);
-  --chart-3: oklch(0.5679 0.2113 276.7065);
-  --chart-4: oklch(0.6356 0.1922 281.8054);
-  --chart-5: oklch(0.4509 0.1758 279.3838);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.958 0.0133 286.1454);
-  --sidebar-foreground: oklch(0.3015 0.0572 282.4176);
-  --sidebar-primary: oklch(0.5417 0.179 288.0332);
-  --sidebar-primary-foreground: oklch(1.0 0 0);
-  --sidebar-accent: oklch(0.9221 0.0373 262.141);
-  --sidebar-accent-foreground: oklch(0.3015 0.0572 282.4176);
-  --sidebar-border: oklch(0.9115 0.0216 285.9625);
-  --sidebar-ring: oklch(0.5417 0.179 288.0332);
+  /* Updated to premium Apple VisionOS aesthetic with soft neutrals and mint accent */
+  --background: oklch(0.98 0.002 240);
+  --foreground: oklch(0.25 0.01 240);
+  --card: oklch(0.99 0.002 240);
+  --card-foreground: oklch(0.25 0.01 240);
+  --popover: oklch(0.99 0.002 240);
+  --popover-foreground: oklch(0.25 0.01 240);
+  --primary: oklch(0.68 0.12 165);
+  --primary-foreground: oklch(0.99 0.002 240);
+  --secondary: oklch(0.94 0.01 240);
+  --secondary-foreground: oklch(0.25 0.01 240);
+  --muted: oklch(0.95 0.008 240);
+  --muted-foreground: oklch(0.55 0.02 240);
+  --accent: oklch(0.96 0.008 240);
+  --accent-foreground: oklch(0.25 0.01 240);
+  --destructive: oklch(0.65 0.25 25);
+  --destructive-foreground: oklch(0.99 0.002 240);
+  --border: oklch(0.92 0.008 240);
+  --input: oklch(0.92 0.008 240);
+  --ring: oklch(0.68 0.12 165);
+  --chart-1: oklch(0.68 0.12 165);
+  --chart-2: oklch(0.72 0.14 170);
+  --chart-3: oklch(0.6 0.18 155);
+  --chart-4: oklch(0.65 0.15 160);
+  --chart-5: oklch(0.58 0.16 150);
+  --radius: 0.875rem;
+  --sidebar: oklch(0.96 0.008 240);
+  --sidebar-foreground: oklch(0.25 0.01 240);
+  --sidebar-primary: oklch(0.68 0.12 165);
+  --sidebar-primary-foreground: oklch(0.99 0.002 240);
+  --sidebar-accent: oklch(0.96 0.008 240);
+  --sidebar-accent-foreground: oklch(0.25 0.01 240);
+  --sidebar-border: oklch(0.92 0.008 240);
+  --sidebar-ring: oklch(0.68 0.12 165);
   --shadow-x: 0px;
-  --shadow-y: 1px;
-  --shadow-blur: 2px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.05;
+  --shadow-y: 2px;
+  --shadow-blur: 12px;
+  --shadow-spread: -2px;
+  --shadow-opacity: 0.08;
   --shadow-color: #000000;
 }
 
@@ -87,8 +88,8 @@
 }
 
 @theme inline {
-  /* Updated to use Inter font for professional appearance */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Updated to SF Pro-like system fonts for Apple aesthetic */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
   --font-mono: ui-monospace, "SF Mono", "Monaco", "Cascadia Code", "Courier New", monospace;
   /* Adding TT Rounds Neue Bold for titles */
   --font-tt-rounds: var(--font-tt-rounds);
@@ -230,4 +231,40 @@
 .privy-close-button:hover {
   background-color: rgba(0, 0, 0, 0.12) !important;
   transform: rotate(90deg) !important;
+}
+
+/* Added Apple VisionOS glassmorphism utilities */
+@layer utilities {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .glass-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-hover:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(100, 200, 180, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 1);
+  }
+
+  .mint-glow {
+    box-shadow: 0 0 20px rgba(100, 200, 180, 0.15), 0 0 40px rgba(100, 200, 180, 0.08);
+  }
+
+  .float-shadow {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
 }
