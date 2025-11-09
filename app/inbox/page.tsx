@@ -26,7 +26,6 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { useWallet } from "@solana/wallet-adapter-react"
-import { WalletConnectButton } from "@/components/wallet-button"
 
 interface Message {
   from: string
@@ -456,10 +455,6 @@ export default function InboxPage() {
             </div>
 
             <div className="flex items-center gap-2 md:gap-3">
-              <div className="hidden sm:block">
-                <WalletConnectButton />
-              </div>
-
               <Button
                 variant="ghost"
                 size="sm"
