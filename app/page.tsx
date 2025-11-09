@@ -99,10 +99,13 @@ export default function Home() {
             href="https://twitter.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="group w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 flex items-center justify-center hover:bg-white hover:shadow-[0_4px_16px_rgba(168,230,207,0.15),0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+            className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
             <svg
-              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#000000]/70 transition-colors"
+              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -114,10 +117,13 @@ export default function Home() {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="group w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 flex items-center justify-center hover:bg-white hover:shadow-[0_4px_16px_rgba(168,230,207,0.15),0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+            className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
             <svg
-              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#000000]/70 transition-colors"
+              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
@@ -132,10 +138,13 @@ export default function Home() {
             href="https://telegram.org"
             target="_blank"
             rel="noopener noreferrer"
-            className="group w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl border border-white/80 flex items-center justify-center hover:bg-white hover:shadow-[0_4px_16px_rgba(168,230,207,0.15),0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.04)]"
+            className="group relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300"
           >
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/80 to-white/60 backdrop-blur-xl border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.04),inset_0_1px_2px_rgba(255,255,255,0.8)] group-hover:border-[#16CE5E]/20 transition-all" />
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#16CE5E]/0 to-[#16CE5E]/0 group-hover:from-[#16CE5E]/[0.03] group-hover:to-[#16CE5E]/[0.06] transition-all duration-300" />
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 shadow-[0_0_16px_rgba(22,206,94,0.08)] transition-all duration-300" />
             <svg
-              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#000000]/70 transition-colors"
+              className="w-[15px] h-[15px] text-[#000000]/50 group-hover:text-[#16CE5E]/80 transition-colors relative z-10"
               fill="currentColor"
               viewBox="0 0 24 24"
             >
