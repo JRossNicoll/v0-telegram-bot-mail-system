@@ -38,7 +38,7 @@ export default function Home() {
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-10 shadow-[0_20px_60px_rgba(0,0,0,0.12),0_8px_20px_rgba(0,0,0,0.08),0_3px_8px_rgba(0,0,0,0.04)] border border-black/[0.06]">
           <div className="flex justify-center mb-4">
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-WdphOc0h5dHVl21uIYSxtf52T5AJrP.jpg"
+              src="/images/design-mode/0BEuUGcK_400x400%20%281%29.jpg"
               alt="Courier Logo"
               className="w-20 h-20 rounded-2xl shadow-lg"
             />

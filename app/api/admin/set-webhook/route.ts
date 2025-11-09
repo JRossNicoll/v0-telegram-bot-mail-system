@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: "Missing env" }, { status: 400 });
   }
 
-  const api = `https://api.telegram.org/bot${BOT_TOKEN}/setWebhook`;
+  const api = `https://api.telegram.org/bot$8375470359:AAGYHnyNJ6VAVXT8oN1JSgF4YoN65tMnNc4}/setWebhook`;
   const url = `${BASE_URL}/api/telegram/webhook${SECRET ? `?secret=${SECRET}` : ""}`;
 
   const res = await fetch(api, {
