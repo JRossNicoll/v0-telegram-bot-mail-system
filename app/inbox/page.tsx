@@ -20,11 +20,9 @@ import {
   X,
   Edit3,
   Package,
-  User,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { useWallet } from "@solana/wallet-adapter-react"
 
 interface Message {
@@ -474,9 +472,11 @@ export default function InboxPage() {
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2 px-2 md:px-3 py-1.5 rounded-lg hover:bg-black/5 transition-colors"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-[#16CE5E]/20 flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-[#16CE5E]" />
-                  </div>
+                  <img
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png"
+                    alt="User"
+                    className="w-7 h-7 rounded-lg flex-shrink-0"
+                  />
                   <span className="text-sm font-mono text-[#000000]/70 hidden sm:inline tracking-tight">
                     {formatAddress(walletAddress)}
                   </span>
@@ -870,18 +870,27 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
     >
       <div className="flex items-start justify-between gap-3 md:gap-4">
         <div className="flex items-start gap-3 md:gap-4 flex-1 min-w-0">
-          <div
-            className={`w-10 h-10 ${isWelcomeMessage ? "bg-[#16CE5E]/20" : "bg-[#16CE5E]/10"} rounded-xl flex items-center justify-center flex-shrink-0 relative`}
-          >
-            {isWelcomeMessage ? (
+          {isWelcomeMessage ? (
+            <div
+              className={`w-10 h-10 bg-[#16CE5E]/20 rounded-xl flex items-center justify-center flex-shrink-0 relative`}
+            >
               <Mail className="w-5 h-5 text-[#16CE5E]" />
-            ) : (
-              <Send className="w-4 h-4 text-[#16CE5E]" />
-            )}
-            {!message.read && (
-              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
-            )}
-          </div>
+              {!message.read && (
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
+              )}
+            </div>
+          ) : (
+            <div className="relative w-10 h-10 flex-shrink-0">
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo%20%282%29-iDzx0XI9vnvq5cLKTEOLnSRsM6jYNx.png"
+                alt="User"
+                className="w-10 h-10 rounded-xl"
+              />
+              {!message.read && (
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
+              )}
+            </div>
+          )}
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 md:gap-3 mb-2">
@@ -954,7 +963,11 @@ function MessageRow({ message, onMarkAsRead }: { message: Message; onMarkAsRead:
                   {isWelcomeMessage && (
                     <div className="border-t border-black/[0.06] pt-4 md:pt-6 mt-4 md:mt-6">
                       <div className="flex items-center gap-3">
-                        <Image src="/logo.png" alt="Courier" width={40} height={40} className="rounded-lg" />
+                        <img
+                          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0BEuUGcK_400x400%20%281%29-0iWevp0tLXfJLfE4K0j2w597j1PN2r.jpg"
+                          alt="Courier"
+                          className="w-10 h-10 rounded-lg"
+                        />
                         <div>
                           <p className="text-sm font-bold text-[#000000] tracking-tight">Courier Team</p>
                           <p className="text-xs text-[#000000]/50 font-medium tracking-tight">
