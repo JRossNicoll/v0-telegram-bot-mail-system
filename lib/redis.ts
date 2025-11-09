@@ -1,5 +1,5 @@
-const UPSTASH_URL = process.env.KV_REST_API_URL
-const UPSTASH_TOKEN = process.env.KV_REST_API_TOKEN
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
 
 async function upstash(command: string[], cache = "no-store") {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) {
